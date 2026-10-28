@@ -22,7 +22,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("CanBorrow", policy => policy.AddRequirements(new CanBorrowRequirement()));
+    options.AddPolicy("CanBorrow", policy => policy.AddRequirements(new CanBorrowRequirement(maxLoans: 3)));
 });
 builder.Services.AddSingleton<IAuthorizationHandler, CanBorrowHandler>();
 
