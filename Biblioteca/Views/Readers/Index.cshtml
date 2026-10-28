@@ -1,0 +1,23 @@
+@model IEnumerable<IdentityRecord>
+@{
+    ViewData["Title"] = "Cititori";
+}
+
+<h1>Cititori</h1>
+
+<table class="table">
+    <thead>
+        <tr><th>Permis</th><th>Nume</th><th>Categorie</th><th>Număr matricol</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var reader in Model)
+        {
+            <tr>
+                <td>@reader.IdentifierIn(Contexts.Biblioteca)</td>
+                <td>@reader.Attribute("nume")</td>
+                <td>@reader.Attribute("categorie")</td>
+                <td>@(reader.IdentifierIn(Contexts.Secretariat) ?? "–")</td>
+            </tr>
+        }
+    </tbody>
+</table>
