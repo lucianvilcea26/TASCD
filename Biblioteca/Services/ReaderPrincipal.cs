@@ -7,7 +7,7 @@ namespace Biblioteca.Services;
 // Singurul loc în care o fișă de cititor devine identitatea sesiunii (un ClaimsPrincipal).
 public static class ReaderPrincipal
 {
-    public static ClaimsPrincipal Create(IdentityRecord reader)
+    public static ClaimsPrincipal Create(IdentityRecord reader, IdentityAttribute? enrollment)
     {
         var claims = new List<Claim>
         {
@@ -19,6 +19,10 @@ public static class ReaderPrincipal
         var matricol = reader.IdentifierIn(Contexts.Secretariat);
         if (matricol is not null)
             claims.Add(new Claim("matricol", matricol, ClaimValueTypes.String, Contexts.Biblioteca));
+
+        // Afirmația secretariatului despre înmatriculare păstrează emitentul și data până la care e valabilă.
+        if (enrollment?.ValidUntil is DateOnly validUntil)
+            claims.Add(new Claim("inmatriculare", validUntil.ToString("yyyy-MM-dd"), ClaimValueTypes.Date, enrollment.Issuer));
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         return new ClaimsPrincipal(identity);

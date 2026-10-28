@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Controllers;
 
-public class AccountController(ILibraryRegistry library) : Controller
+public class AccountController(ILibraryRegistry library, ISecretariatRegistry secretariat) : Controller
 {
     [HttpGet]
     public IActionResult Login(string? returnUrl)
@@ -28,7 +28,11 @@ public class AccountController(ILibraryRegistry library) : Controller
             return View(model);
         }
 
-        await HttpContext.SignInAsync(ReaderPrincipal.Create(reader));
+        var matricol = reader.IdentifierIn(Contexts.Secretariat);
+        var enrollment = matricol is null ? null
+            : secretariat.FindByMatricol(matricol)?.Attributes.FirstOrDefault(a => a.Name == "înmatriculare");
+
+        await HttpContext.SignInAsync(ReaderPrincipal.Create(reader, enrollment));
         if (Url.IsLocalUrl(model.ReturnUrl))
             return Redirect(model.ReturnUrl);
         return RedirectToAction("Index", "Home");
