@@ -5,6 +5,15 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// Jurnalul cererilor: vede fiecare cerere la intrare și răspunsul ei la ieșire.
+app.Use(async (context, next) =>
+{
+    var watch = System.Diagnostics.Stopwatch.StartNew();
+    await next(context);
+    Console.WriteLine(
+        $"{context.Request.Method} {context.Request.Path} -> {context.Response.StatusCode} ({watch.ElapsedMilliseconds} ms)");
+});
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
