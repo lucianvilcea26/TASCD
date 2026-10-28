@@ -1,3 +1,5 @@
+using Biblioteca.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Biblioteca.Services;
 
@@ -17,6 +19,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanBorrow", policy => policy.AddRequirements(new CanBorrowRequirement()));
+});
+builder.Services.AddSingleton<IAuthorizationHandler, CanBorrowHandler>();
 
 var app = builder.Build();
 

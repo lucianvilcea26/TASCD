@@ -13,7 +13,7 @@ public class BooksController(IBookCatalog catalog) : Controller
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Policy = "CanBorrow")]
     [ValidateAntiForgeryToken]
     public IActionResult Borrow(int id)
     {
