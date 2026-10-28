@@ -40,6 +40,11 @@ public class AccountController(ILibraryRegistry library) : Controller
         return View(User.Claims);
     }
 
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
