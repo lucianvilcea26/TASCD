@@ -1,0 +1,23 @@
+@model ReaderDetailsViewModel
+@{
+    ViewData["Title"] = "Fișa cititorului";
+}
+
+<h1>@Model.Library.Attribute("nume")</h1>
+<p class="text-muted">Aceeași persoană, așa cum o văd două organizații diferite.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <partial name="_IdentityRecord" model="Model.Library" />
+    </div>
+    <div class="col-md-6">
+        @if (Model.Secretariat is not null)
+        {
+            <partial name="_IdentityRecord" model="Model.Secretariat" />
+        }
+        else
+        {
+            <p>Secretariatul nu are o fișă pentru această persoană.</p>
+        }
+    </div>
+</div>

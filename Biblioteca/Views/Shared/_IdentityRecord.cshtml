@@ -1,0 +1,22 @@
+@model IdentityRecord
+
+<div class="card mb-3">
+    <div class="card-header">Ce știe <b>@Model.Context</b></div>
+    <div class="card-body">
+        <h6>Identificatori</h6>
+        <ul>
+            @foreach (var id in Model.Identifiers)
+            {
+                <li><code>@id.Value</code> <span class="text-muted">în contextul @id.Context</span></li>
+            }
+        </ul>
+        <h6>Atribute</h6>
+        <table class="table table-sm">
+            <tr><th>Nume</th><th>Valoare</th><th>Sursa</th><th>Valabil până la</th></tr>
+            @foreach (var a in Model.Attributes)
+            {
+                <tr><td>@a.Name</td><td>@a.Value</td><td>@a.Issuer</td><td>@(a.ValidUntil?.ToString("dd.MM.yyyy") ?? "–")</td></tr>
+            }
+        </table>
+    </div>
+</div>

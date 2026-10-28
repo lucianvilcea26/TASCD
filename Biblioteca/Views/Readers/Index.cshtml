@@ -13,7 +13,7 @@
         @foreach (var reader in Model)
         {
             <tr>
-                <td>@reader.IdentifierIn(Contexts.Biblioteca)</td>
+                <td><a asp-action="Details" asp-route-id="@reader.IdentifierIn(Contexts.Biblioteca)">@reader.IdentifierIn(Contexts.Biblioteca)</a></td>
                 <td>@reader.Attribute("nume")</td>
                 <td>@reader.Attribute("categorie")</td>
                 <td>@(reader.IdentifierIn(Contexts.Secretariat) ?? "–")</td>
