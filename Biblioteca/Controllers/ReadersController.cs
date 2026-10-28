@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Biblioteca.Models;
 using Biblioteca.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Controllers;
 
+[Authorize(Roles = "bibliotecar")]
 public class ReadersController(ILibraryRegistry library, ISecretariatRegistry secretariat) : Controller
 {
     public IActionResult Index()

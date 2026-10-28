@@ -13,6 +13,7 @@ public static class ReaderPrincipal
         {
             new(ClaimTypes.NameIdentifier, reader.IdentifierIn(Contexts.Biblioteca)!, ClaimValueTypes.String, Contexts.Biblioteca),
             new(ClaimTypes.Name, reader.Attribute("nume")!, ClaimValueTypes.String, Contexts.Biblioteca),
+            new(ClaimTypes.Role, reader.Attribute("categorie")!, ClaimValueTypes.String, Contexts.Biblioteca),
         };
 
         var matricol = reader.IdentifierIn(Contexts.Secretariat);
