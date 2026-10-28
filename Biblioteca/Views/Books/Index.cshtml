@@ -1,13 +1,19 @@
 @model IEnumerable<Book>
+@inject Biblioteca.Services.IBookCatalog Catalog
 @{
     ViewData["Title"] = "Catalog";
 }
 
 <h1>Catalog</h1>
 
+@if (TempData["Message"] is string message)
+{
+    <div class="alert alert-info">@message</div>
+}
+
 <table class="table">
     <thead>
-        <tr><th>Titlu</th><th>Autor</th><th>An</th><th>Exemplare</th></tr>
+        <tr><th>Titlu</th><th>Autor</th><th>An</th><th>Disponibile</th><th></th></tr>
     </thead>
     <tbody>
         @foreach (var book in Model)
@@ -16,7 +22,15 @@
                 <td>@book.Title</td>
                 <td>@book.Author</td>
                 <td>@book.Year</td>
-                <td>@book.Copies</td>
+                <td>@Catalog.Available(book) din @book.Copies</td>
+                <td>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form asp-action="Borrow" asp-route-id="@book.Id" method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Împrumută</button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
     </tbody>
