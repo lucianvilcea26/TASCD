@@ -26,6 +26,12 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddSingleton<IAuthorizationHandler, CanBorrowHandler>();
 
+builder.Services.AddHttpClient<ISecretariatClient, HttpSecretariatClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Secretariat:BaseUrl"]!);
+    client.DefaultRequestHeaders.Add("X-Api-Key", builder.Configuration["Secretariat:ApiKey"]);
+});
+
 var app = builder.Build();
 
 // Jurnalul cererilor: vede fiecare cerere la intrare și răspunsul ei la ieșire.
