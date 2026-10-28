@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Biblioteca.Models;
 using Biblioteca.Services;
@@ -8,9 +9,9 @@ namespace Biblioteca.Controllers;
 public class AccountController(ILibraryRegistry library) : Controller
 {
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string? returnUrl)
     {
-        return View(new LoginViewModel());
+        return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 
     [HttpPost]
@@ -28,6 +29,22 @@ public class AccountController(ILibraryRegistry library) : Controller
         }
 
         await HttpContext.SignInAsync(ReaderPrincipal.Create(reader));
+        if (Url.IsLocalUrl(model.ReturnUrl))
+            return Redirect(model.ReturnUrl);
+        return RedirectToAction("Index", "Home");
+    }
+
+    [Authorize]
+    public IActionResult Me()
+    {
+        return View(User.Claims);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
 }

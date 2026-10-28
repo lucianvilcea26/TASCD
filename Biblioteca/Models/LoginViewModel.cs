@@ -12,4 +12,6 @@ public class LoginViewModel
     [DataType(DataType.Password)]
     [Display(Name = "Parolă")]
     public string Password { get; set; } = "";
+
+    public string? ReturnUrl { get; set; }
 }
