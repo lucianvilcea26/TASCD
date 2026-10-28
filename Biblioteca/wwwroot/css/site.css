@@ -1,5 +1,23 @@
+/* Biblioteca ASE: tema aplicației, peste Bootstrap. */
+:root {
+  --tascd-brand: #1f3a5f;
+  --tascd-brand-2: #2f5d8c;
+  --tascd-accent: #e0a526;
+  --tascd-ground: #f3f5f9;
+  --tascd-paper: #ffffff;
+  --tascd-ink: #1d2433;
+  --tascd-muted: #5c6678;
+  --tascd-rule: #dfe4ec;
+  --tascd-soft: #eef2f8;
+  --bs-body-font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --bs-link-color-rgb: 47, 93, 140;
+  --bs-link-hover-color-rgb: 31, 58, 95;
+}
+
 html {
-  font-size: 14px;
+  position: relative;
+  min-height: 100%;
+  font-size: 15px;
 }
 
 @media (min-width: 768px) {
@@ -8,24 +26,136 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+  margin-bottom: 72px;
+  background: var(--tascd-ground);
+  color: var(--tascd-ink);
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Bara de navigare */
+.navbar {
+  background: linear-gradient(90deg, var(--tascd-brand), var(--tascd-brand-2)) !important;
+  border-bottom: 3px solid var(--tascd-accent) !important;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.navbar .navbar-brand {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.navbar .nav-link.text-dark {
+  color: rgba(255, 255, 255, .85) !important;
+  border-radius: .375rem;
+  padding: .4rem .75rem !important;
+}
+
+.navbar .nav-link.text-dark:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, .12);
+}
+
+.navbar-toggler {
+  filter: invert(1);
+}
+
+/* Conținutul, ca o foaie */
+main[role="main"] {
+  background: var(--tascd-paper);
+  border: 1px solid var(--tascd-rule);
+  border-radius: .75rem;
+  padding: 2rem 2rem 1.5rem !important;
+  box-shadow: 0 .25rem 1rem rgba(31, 58, 95, .06);
+}
+
+h1, h2, h3, .display-4 {
+  color: var(--tascd-brand);
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+
+h1 {
+  margin-bottom: 1rem;
+}
+
+code {
+  color: #9a3b26;
+}
+
+/* Tabele */
+.table {
+  --bs-table-bg: transparent;
+}
+
+.table th {
+  background: var(--tascd-soft);
+  color: var(--tascd-brand);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-bottom: 2px solid var(--tascd-rule);
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.table tbody tr:hover td {
+  background: #f7f9fc;
+}
+
+/* Butoane și formulare */
+.btn-primary {
+  --bs-btn-bg: var(--tascd-brand-2);
+  --bs-btn-border-color: var(--tascd-brand-2);
+  --bs-btn-hover-bg: var(--tascd-brand);
+  --bs-btn-hover-border-color: var(--tascd-brand);
+  --bs-btn-active-bg: var(--tascd-brand);
+  --bs-btn-active-border-color: var(--tascd-brand);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--tascd-brand-2);
+  --bs-btn-border-color: var(--tascd-brand-2);
+  --bs-btn-hover-bg: var(--tascd-brand-2);
+  --bs-btn-hover-border-color: var(--tascd-brand-2);
+  --bs-btn-active-bg: var(--tascd-brand);
+}
+
+.form-control {
+  border-radius: .5rem;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  border-color: var(--tascd-accent);
+  box-shadow: 0 0 0 .2rem rgba(224, 165, 38, .45);
+}
+
+/* Carduri, mesaje, insigne */
+.card {
+  border-color: var(--tascd-rule);
+  border-radius: .75rem;
+  overflow: hidden;
+}
+
+.card-header {
+  background: var(--tascd-soft);
+  color: var(--tascd-brand);
+}
+
+.alert-info {
+  background: #eaf2fb;
+  border-color: #c9dcf2;
+  color: var(--tascd-brand);
+}
+
+/* Subsolul */
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+  color: var(--tascd-muted);
+  font-size: .9rem;
 }
