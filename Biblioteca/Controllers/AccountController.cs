@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Biblioteca.Models;
 using Biblioteca.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ public class AccountController(ILibraryRegistry library) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
@@ -26,7 +27,7 @@ public class AccountController(ILibraryRegistry library) : Controller
             return View(model);
         }
 
-        ViewData["Message"] = $"Parolă corectă, {reader.Attribute("nume")}. La următoarea cerere însă aplicația nu mai știe cine ești.";
-        return View(model);
+        await HttpContext.SignInAsync(ReaderPrincipal.Create(reader));
+        return RedirectToAction("Index", "Home");
     }
 }
