@@ -1,3 +1,3 @@
 namespace Biblioteca.Models;
 
-public record ReaderDetailsViewModel(IdentityRecord Library, IdentityRecord? Secretariat);
+public record ReaderDetailsViewModel(IdentityRecord Library, EnrollmentStatus? Enrollment);

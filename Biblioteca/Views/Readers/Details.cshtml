@@ -4,20 +4,26 @@
 }
 
 <h1>@Model.Library.Attribute("nume")</h1>
-<p class="text-muted">Aceeași persoană, așa cum o văd două organizații diferite.</p>
+<p class="text-muted">Ce știe biblioteca și singurul lucru pe care îl află de la secretariat.</p>
 
 <div class="row">
     <div class="col-md-6">
         <partial name="_IdentityRecord" model="Model.Library" />
     </div>
     <div class="col-md-6">
-        @if (Model.Secretariat is not null)
-        {
-            <partial name="_IdentityRecord" model="Model.Secretariat" />
-        }
-        else
-        {
-            <p>Secretariatul nu are o fișă pentru această persoană.</p>
-        }
+        <div class="card mb-3">
+            <div class="card-header">Ce spune <b>Secretariat</b></div>
+            <div class="card-body">
+                @if (Model.Enrollment is null)
+                {
+                    <p>Secretariatul nu are o fișă pentru această persoană.</p>
+                }
+                else
+                {
+                    <p>Înmatriculat: <b>@(Model.Enrollment.Enrolled ? "da" : "nu")</b></p>
+                    <p>Valabil până la: @Model.Enrollment.ValidUntil.ToString("dd.MM.yyyy")</p>
+                }
+            </div>
+        </div>
     </div>
 </div>
