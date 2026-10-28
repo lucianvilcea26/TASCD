@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IBookCatalog, InMemoryBookCatalog>();
 builder.Services.AddSingleton<ILibraryRegistry, InMemoryLibraryRegistry>();
+builder.Services.AddSingleton<ISecretariatRegistry, InMemorySecretariatRegistry>();
 
 var app = builder.Build();
 
