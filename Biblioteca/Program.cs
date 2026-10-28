@@ -23,7 +23,7 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("CanBorrow", policy => policy.AddRequirements(new CanBorrowRequirement(maxLoans: 3)));
 });
-builder.Services.AddSingleton<IAuthorizationHandler, CanBorrowHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, CanBorrowHandler>();
 
 builder.Services.AddHttpClient<ISecretariatClient, HttpSecretariatClient>(client =>
 {

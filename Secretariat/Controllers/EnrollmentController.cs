@@ -18,4 +18,10 @@ public class EnrollmentController(StudentRegistry registry) : ControllerBase
         var today = DateOnly.FromDateTime(DateTime.Today);
         return new EnrollmentResponse(student.Matricol, student.EnrolledUntil >= today, student.EnrolledUntil);
     }
+
+    [HttpPost("{matricol}/revoke")]
+    public IActionResult Revoke(string matricol)
+    {
+        return registry.Revoke(matricol) ? NoContent() : NotFound();
+    }
 }

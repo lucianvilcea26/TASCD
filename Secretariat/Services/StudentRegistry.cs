@@ -11,5 +11,22 @@ public class StudentRegistry
         new("SIM-2024-0107", "Elena Dumitru", "6001224400032", "Securitate informatică", 9.65m, new DateOnly(2026, 7, 31)),
     ];
 
+    private readonly Lock gate = new();
+
     public Student? Find(string matricol) => students.FirstOrDefault(s => s.Matricol == matricol);
+
+    // Retragerea înmatriculării: valabilitatea se încheie ieri.
+    public bool Revoke(string matricol)
+    {
+        lock (gate)
+        {
+            var index = students.FindIndex(s => s.Matricol == matricol);
+            if (index < 0)
+                return false;
+
+            var yesterday = DateOnly.FromDateTime(DateTime.Today).AddDays(-1);
+            students[index] = students[index] with { EnrolledUntil = yesterday };
+            return true;
+        }
+    }
 }
