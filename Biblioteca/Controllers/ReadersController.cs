@@ -21,4 +21,14 @@ public class ReadersController(ILibraryRegistry library, ISecretariatRegistry se
         var student = matricol is null ? null : secretariat.FindByMatricol(matricol);
         return View(new ReaderDetailsViewModel(reader, student));
     }
+
+    public IActionResult Find(string card)
+    {
+        if (library.FindByCard(card) is null)
+        {
+            ViewData["Card"] = card;
+            return View("NotFound");
+        }
+        return RedirectToAction(nameof(Details), new { id = card });
+    }
 }
