@@ -480,3 +480,11 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Razor Pages folders named "Debug" are source code, not build output
+!**/Pages/Debug/
+
+# Local SQLite databases created by the labs
+*.db
+*.db-shm
+*.db-wal

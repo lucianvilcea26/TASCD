@@ -1,0 +1,21 @@
+@* Shared login/logout widget used in both apps' navigation bars. *@
+@if (User.Identity?.IsAuthenticated == true)
+{
+    var roles = string.Join(", ", User.FindAll(TokenClaims.RoleClaim).Select(c => c.Value));
+    <div class="d-flex align-items-center gap-2">
+        <span class="navbar-text small">
+            <strong>@User.Identity.Name</strong>
+            @if (roles.Length > 0) { <span class="opacity-75">(@roles)</span> }
+        </span>
+        <a class="btn btn-sm btn-outline-light" href="/Debug/Token">Token</a>
+        <form method="post" action="/account/logout" class="m-0">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-sm btn-light">Log out</button>
+        </form>
+    </div>
+}
+else
+{
+    <a class="btn btn-sm btn-light"
+       href="/account/login?returnUrl=@Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString)">Log in</a>
+}

@@ -1,0 +1,76 @@
+@page
+@model Secretariat.Web.Pages.Students.IndexModel
+@{
+    ViewData["Title"] = "Students";
+}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h1 class="h3 m-0">Students</h1>
+    <div>
+        <a class="btn btn-primary" asp-page="Create">Add student</a>
+        <a class="btn btn-outline-primary" asp-page="Import">Import CSV</a>
+    </div>
+</div>
+
+@if (Model.KeycloakError is not null)
+{
+    <div class="alert alert-warning"><strong>Could not read account state from Keycloak.</strong> @Model.KeycloakError</div>
+}
+
+@if (Model.Rows.Count == 0)
+{
+    <p class="text-muted">No students yet. <a asp-page="Create">Add one</a> or <a asp-page="Import">import the sample CSV</a>.</p>
+}
+else
+{
+    <div class="table-responsive">
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr class="small text-muted">
+                <th colspan="4">Registry (Secretariat database)</th>
+                <th colspan="5" class="border-start">Account (live from Keycloak Admin API)</th>
+            </tr>
+            <tr>
+                <th>Student ID</th><th>Name</th><th>Faculty</th><th>Status</th>
+                <th class="border-start">Account</th><th>Email verified</th><th>Password</th><th>MFA</th><th>Sessions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var row in Model.Rows)
+        {
+            var s = row.Student;
+            var a = row.Account;
+            <tr>
+                <td><a asp-page="Edit" asp-route-id="@s.Id"><code>@s.StudentId</code></a></td>
+                <td>@s.FullName<br /><span class="small text-muted">@s.Email</span></td>
+                <td class="small">@s.Faculty</td>
+                <td><span class="badge @Ui.StatusBadge(s.Status)">@s.Status.ToClaimValue()</span></td>
+                <td class="border-start">
+                    @if (s.KeycloakUserId is null)
+                    {
+                        <span class="badge text-bg-warning">not provisioned</span>
+                    }
+                    else if (a is null && Model.KeycloakError is null)
+                    {
+                        <span class="badge text-bg-danger" title="The registry points to a Keycloak user that no longer exists">missing in Keycloak</span>
+                    }
+                    else if (a is not null)
+                    {
+                        <span class="badge @(a.Enabled ? "text-bg-success" : "text-bg-secondary")">@(a.Enabled ? "enabled" : "disabled")</span>
+                    }
+                    @if (s.LastSyncError is not null)
+                    {
+                        <span class="badge text-bg-danger" title="@s.LastSyncError">sync error</span>
+                    }
+                </td>
+                <td>@(a is null ? "" : a.EmailVerified ? "✅" : "—")</td>
+                <td>@(a is null ? "" : a.HasPassword ? "✅" : "—")</td>
+                <td>@(a is null ? "" : a.HasOtp ? "✅ TOTP" : "—")</td>
+                <td>@a?.ActiveSessions</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+    <p class="small text-muted">"Email verified", "Password" and "MFA" turn green after the student opens the invitation link,
+        sets a password and scans the QR code with an authenticator app.</p>
+}

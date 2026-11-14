@@ -1,0 +1,90 @@
+@page
+@model Biblioteca.Web.Pages.Desk.IndexModel
+@{
+    ViewData["Title"] = "Lending desk";
+    var check = Model.LastCheck;
+}
+<h1 class="h3">Lending desk</h1>
+<p class="text-muted">You are logged in as the librarian, so <em>your</em> token says nothing about the student.
+    Enrollment is checked live with the Secretariat.</p>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <form method="post" class="card">
+            <div class="card-header">Lend a book</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="StudentId" class="form-label">Student ID (from the student card)</label>
+                    <input asp-for="StudentId" class="form-control" placeholder="S2026001" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="BookId" class="form-label">Book</label>
+                    <select asp-for="BookId" class="form-select"
+                            asp-items="@(new SelectList(Model.Books, nameof(Book.Id), nameof(Book.Title)))"></select>
+                </div>
+                <button type="submit" asp-page-handler="Lend" class="btn btn-success">Check enrollment and lend</button>
+                <button type="submit" asp-page-handler="Check" class="btn btn-outline-secondary">Only check enrollment</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100 @(check is null ? "" : check.Allowed ? "border-success" : "border-danger")">
+            <div class="card-header">Last answer from the Secretariat API</div>
+            <div class="card-body">
+                @if (check is null)
+                {
+                    <p class="text-muted small mb-2">Nothing checked yet. When you press a button, Biblioteca:</p>
+                    <ol class="small mb-0">
+                        <li>gets a token for <strong>itself</strong> from Keycloak (<code>grant_type=client_credentials</code>,
+                            client <code>biblioteca</code>);</li>
+                        <li>calls <code>GET http://localhost:5001/api/students/{id}/enrollment</code> with it;</li>
+                        <li>the Secretariat checks <code>aud</code> = <code>secretariat-api</code> and role
+                            <code>enrollment.read</code>, then answers from its database.</li>
+                    </ol>
+                }
+                else
+                {
+                    <p class="mb-2">
+                        <code>GET /api/students/@Model.CheckedStudentId/enrollment</code> →
+                        <strong>@(check.HttpStatus == 0 ? "no response" : check.HttpStatus.ToString())</strong>
+                        @if (check.Status is not null)
+                        {
+                            <span class="badge @(check.Allowed ? "text-bg-success" : "text-bg-danger")">@check.Status</span>
+                        }
+                    </p>
+                    <pre class="small bg-body-tertiary p-2 mb-0" style="white-space: pre-wrap;">@check.Response</pre>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="h5">Books currently out</h2>
+@if (Model.ActiveLoans.Count == 0)
+{
+    <p class="text-muted">None.</p>
+}
+else
+{
+    <table class="table table-sm align-middle">
+        <thead><tr><th>Book</th><th>Student</th><th>Due</th><th>Channel</th><th>Evidence</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var l in Model.ActiveLoans)
+        {
+            <tr>
+                <td>@l.Book.Title</td>
+                <td>@l.BorrowerName <code>@l.StudentId</code></td>
+                <td>@l.DueAtUtc.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                <td><span class="badge text-bg-light border">@l.Channel</span></td>
+                <td class="small">@l.EnrollmentEvidence</td>
+                <td>
+                    <form method="post" asp-page-handler="Return" asp-route-loanId="@l.Id" class="m-0">
+                        <button class="btn btn-sm btn-outline-success">Returned</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

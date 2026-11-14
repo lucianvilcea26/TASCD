@@ -1,0 +1,50 @@
+# Infrastructure for the lab. The two .NET apps run on the host (dotnet run / IDE).
+#   Keycloak admin console : http://localhost:8080/admin   (admin / admin)
+#   Mailpit (caught email) : http://localhost:8025
+# Reset everything (users, sessions, realm):  docker compose down -v
+
+name: universitate
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - keycloak-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.2
+    # start-dev = HTTP, relaxed hostname checks, no build step. Lab use only.
+    # --import-realm loads ./keycloak/*.json on first start (skipped if the realm already exists).
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm-universitate.json:/opt/keycloak/data/import/realm-universitate.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  mailpit:
+    image: axllent/mailpit:v1.33.1
+    ports:
+      - "8025:8025"   # web UI; SMTP (1025) is only reachable from Keycloak inside the network
+
+volumes:
+  keycloak-db:

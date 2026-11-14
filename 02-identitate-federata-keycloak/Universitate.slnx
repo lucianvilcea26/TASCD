@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Biblioteca.Web/Biblioteca.Web.csproj" />
+    <Project Path="src/Secretariat.Web/Secretariat.Web.csproj" />
+    <Project Path="src/Universitate.Shared/Universitate.Shared.csproj" />
+  </Folder>
+</Solution>

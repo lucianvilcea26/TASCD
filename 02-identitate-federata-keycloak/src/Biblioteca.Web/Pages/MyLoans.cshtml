@@ -1,0 +1,37 @@
+@page
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "reader")]
+@inject BibliotecaDb Db
+@using Microsoft.EntityFrameworkCore
+@{
+    ViewData["Title"] = "My loans";
+    var studentId = User.FindFirst("student_id")?.Value;
+    var loans = await Db.Loans.AsNoTracking().Include(l => l.Book)
+        .Where(l => l.StudentId == studentId)
+        .OrderByDescending(l => l.LoanedAtUtc)
+        .ToListAsync();
+}
+<h1 class="h3">My loans</h1>
+<p class="text-muted">Books are returned at the lending desk.</p>
+
+@if (loans.Count == 0)
+{
+    <p>No loans yet. <a asp-page="/Index">Browse the catalog</a>.</p>
+}
+else
+{
+    <table class="table table-sm">
+        <thead><tr><th>Book</th><th>Borrowed</th><th>Due</th><th>Returned</th><th>How enrollment was checked</th></tr></thead>
+        <tbody>
+        @foreach (var l in loans)
+        {
+            <tr class="@(l.IsActive ? "" : "text-muted")">
+                <td>@l.Book.Title</td>
+                <td>@l.LoanedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@l.DueAtUtc.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                <td>@(l.ReturnedAtUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                <td class="small"><span class="badge text-bg-light border">@l.Channel</span> @l.EnrollmentEvidence</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

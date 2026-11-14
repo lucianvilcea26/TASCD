@@ -1,0 +1,112 @@
+@page "{id:int}"
+@model Secretariat.Web.Pages.Students.EditModel
+@{
+    var s = Model.Student;
+    var a = Model.Account;
+    ViewData["Title"] = s.FullName;
+    ViewData["LockStudentId"] = true;
+}
+<div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+    <h1 class="h3 m-0">@s.FullName</h1>
+    <code class="fs-5">@s.StudentId</code>
+    <span class="badge @Ui.StatusBadge(s.Status) fs-6">@s.Status.ToClaimValue()</span>
+</div>
+
+@if (TempData["Calls"] is string calls && calls.Length > 0)
+{
+    <div class="card mb-3 border-primary">
+        <div class="card-header small">Keycloak Admin API calls just made by the Secretariat (as <code>service-account-secretariat</code>)</div>
+        <pre class="m-0 p-3 small">@calls</pre>
+    </div>
+}
+@if (s.LastSyncError is not null)
+{
+    <div class="alert alert-danger"><strong>Keycloak is out of sync with the registry.</strong> @s.LastSyncError</div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <form method="post" asp-page-handler="Save" asp-route-id="@s.Id" class="card">
+            <div class="card-header">Registry data <span class="text-muted small">(Secretariat database)</span></div>
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <partial name="_StudentFields" for="Input" />
+                <div class="form-check mt-3">
+                    <input asp-for="RevokeSessions" class="form-check-input" />
+                    <label asp-for="RevokeSessions" class="form-check-label">
+                        Also end the student's Keycloak sessions (forces a new login, so new tokens carry the change immediately)
+                    </label>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Save and publish to Keycloak</button>
+                <a asp-page="Index" class="btn btn-link">Back to list</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card mb-3">
+            <div class="card-header">Keycloak account <span class="text-muted small">(live, Admin API)</span></div>
+            @if (s.KeycloakUserId is null)
+            {
+                <div class="card-body">
+                    <p>No account in Keycloak yet.</p>
+                    <form method="post" asp-page-handler="Provision" asp-route-id="@s.Id">
+                        <button class="btn btn-primary">Create Keycloak account and send invitation</button>
+                    </form>
+                </div>
+            }
+            else if (Model.AccountError is not null)
+            {
+                <div class="card-body text-danger">@Model.AccountError</div>
+            }
+            else if (a is null)
+            {
+                <div class="card-body">
+                    <p class="text-danger mb-0">The registry points to Keycloak user <code>@s.KeycloakUserId</code>, which no longer exists
+                        (deleted in the admin console?).</p>
+                </div>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush small">
+                    <li class="list-group-item">User id: <code>@s.KeycloakUserId</code></li>
+                    <li class="list-group-item">Username: <code>@s.StudentId.ToLowerInvariant()</code> (or log in with the email)</li>
+                    <li class="list-group-item">Enabled: @(a.Enabled ? "yes" : "no")</li>
+                    <li class="list-group-item">Invitation sent: @Ui.Local(s.InvitedAtUtc)</li>
+                    <li class="list-group-item">Email verified: @(a.EmailVerified ? "✅ yes" : "not yet")</li>
+                    <li class="list-group-item">Password set: @(a.HasPassword ? "✅ yes" : "not yet")</li>
+                    <li class="list-group-item">Authenticator app (TOTP): @(a.HasOtp ? "✅ registered" : "not yet")</li>
+                    <li class="list-group-item">Pending required actions:
+                        @if (a.RequiredActions.Count == 0)
+                        {
+                            <span>none</span>
+                        }
+                        else
+                        {
+                            <code>@string.Join(", ", a.RequiredActions)</code>
+                        }
+                    </li>
+                    <li class="list-group-item">Active sessions: @a.ActiveSessions</li>
+                </ul>
+                <div class="card-body d-flex flex-wrap gap-2">
+                    <form method="post" asp-page-handler="Resend" asp-route-id="@s.Id">
+                        <button class="btn btn-sm btn-outline-primary">Resend invitation</button>
+                    </form>
+                    <form method="post" asp-page-handler="Revoke" asp-route-id="@s.Id">
+                        <button class="btn btn-sm btn-outline-warning">End all sessions</button>
+                    </form>
+                    <a class="btn btn-sm btn-outline-secondary" href="@Model.AdminConsoleLink" target="_blank">Same user in admin console ↗</a>
+                </div>
+            }
+        </div>
+
+        <form method="post" asp-page-handler="Delete" asp-route-id="@s.Id"
+              onsubmit="return confirm('Delete this student from the registry and from Keycloak?');">
+            <button class="btn btn-sm btn-outline-danger">Delete student (registry + Keycloak)</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

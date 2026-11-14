@@ -1,0 +1,48 @@
+@page
+@{
+    ViewData["Title"] = "Home";
+}
+<div class="p-4 p-md-5 mb-4 bg-body-tertiary rounded-3">
+    <h1 class="display-6">Secretariat</h1>
+    <p class="lead">The student registry. It is the <strong>source of truth</strong> for who is a student;
+        Keycloak only receives a copy of what it needs for login and tokens.</p>
+
+    @if (User.Identity?.IsAuthenticated != true)
+    {
+        <a class="btn btn-primary btn-lg" href="/account/login">Log in with Keycloak</a>
+        <p class="mt-3 mb-0 small text-muted">Staff: <code>secretara</code>. Students: use the invitation email (see Mailpit).</p>
+    }
+    else if (User.IsInRole("secretary"))
+    {
+        <a class="btn btn-primary" asp-page="/Students/Index">Manage students</a>
+        <a class="btn btn-outline-primary" asp-page="/Students/Create">Add a student</a>
+    }
+    else if (User.IsInRole("student"))
+    {
+        <a class="btn btn-primary" asp-page="/Me">See my record</a>
+    }
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h2 class="h6">Registers users in the IdP</h2>
+            <p class="small mb-0">Creating a student here calls the Keycloak <strong>Admin REST API</strong> as the
+                Secretariat's service account. The Keycloak admin console is just another client of the same API.</p>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h2 class="h6">Invites, doesn't trust self-registration</h2>
+            <p class="small mb-0">Names and student IDs come from the registry and are read-only for students.
+                The emailed link proves the student controls the address on record; then they set a password and an authenticator app.</p>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h2 class="h6">Answers Biblioteca</h2>
+            <p class="small mb-0"><code>GET /api/students/{id}/enrollment</code> returns the current status, for callers
+                holding a token with audience <code>secretariat-api</code> and role <code>enrollment.read</code>.</p>
+        </div></div>
+    </div>
+</div>

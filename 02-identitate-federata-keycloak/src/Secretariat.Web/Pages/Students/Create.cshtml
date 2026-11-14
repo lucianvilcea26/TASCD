@@ -1,0 +1,35 @@
+@page
+@model Secretariat.Web.Pages.Students.CreateModel
+@{
+    ViewData["Title"] = "Add student";
+}
+<h1 class="h3">Add a student</h1>
+<p class="text-muted">The data comes from the student's enrollment file (checked against their ID card at the counter).
+    The student will not be able to change it.</p>
+
+<form method="post" class="card card-body mb-4">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @* for="Input" makes the field names Input.StudentId, Input.FirstName, ... *@
+    <partial name="_StudentFields" for="Input" />
+    <div class="form-check mt-3">
+        <input asp-for="SendInvitation" class="form-check-input" />
+        <label asp-for="SendInvitation" class="form-check-label">Send the invitation email now (set password + register authenticator app)</label>
+    </div>
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Save and create Keycloak account</button>
+        <a asp-page="Index" class="btn btn-link">Cancel</a>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-header small">What happens when you press Save</div>
+    <ol class="card-body small mb-0">
+        <li>The student is saved in the <strong>Secretariat database</strong> (source of truth).</li>
+        <li><code>POST /admin/realms/universitate/users</code>: creates the account with names, email and the read-only attributes
+            <code>student_id</code>, <code>enrollment_status</code>, <code>faculty</code>.</li>
+        <li><code>PUT /users/{id}/groups/{studenti}</code>: the group grants the roles <code>secretariat:student</code> and <code>biblioteca:reader</code>.</li>
+        <li><code>PUT /users/{id}/execute-actions-email</code> with <code>VERIFY_EMAIL</code>, <code>UPDATE_PASSWORD</code> and <code>CONFIGURE_TOTP</code>: Keycloak emails a one-time link; opening it proves the student controls the inbox.</li>
+    </ol>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

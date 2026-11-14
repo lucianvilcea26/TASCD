@@ -1,0 +1,55 @@
+﻿@page
+@model Biblioteca.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "Catalog";
+    var isReader = User.IsInRole("reader");
+    var status = User.FindFirst("enrollment_status")?.Value;
+}
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+    <div>
+        <h1 class="h3 mb-1">Catalog</h1>
+        <p class="text-muted mb-0">Students can borrow self-service. The library trusts the <code>enrollment_status</code> claim in their token.</p>
+    </div>
+    @if (isReader)
+    {
+        <div class="card border-@(status == "enrolled" ? "success" : "danger")">
+            <div class="card-body py-2 small">
+                Your token says: <code>student_id</code> = <strong>@User.FindFirst("student_id")?.Value</strong>,
+                <code>enrollment_status</code> = <strong>@(status ?? "(missing)")</strong><br />
+                <span class="text-muted">token issued @User.UnixTime("iat")?.ToLocalTime().ToString("HH:mm:ss") ·
+                    <a href="/Debug/Token">inspect</a></span>
+            </div>
+        </div>
+    }
+    else if (User.Identity?.IsAuthenticated != true)
+    {
+        <a class="btn btn-success" href="/account/login">Log in to borrow</a>
+    }
+</div>
+
+<table class="table align-middle">
+    <thead><tr><th>Title</th><th>Author</th><th>Year</th><th>Available</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var row in Model.Books)
+    {
+        <tr>
+            <td>@row.Book.Title</td>
+            <td class="small">@row.Book.Author</td>
+            <td>@row.Book.Year</td>
+            <td>@row.Available / @row.Book.Copies</td>
+            <td class="text-end">
+                @if (row.BorrowedByMe)
+                {
+                    <span class="badge text-bg-secondary">borrowed by you</span>
+                }
+                else if (isReader)
+                {
+                    <form method="post" asp-page-handler="Borrow" asp-route-bookId="@row.Book.Id" class="m-0">
+                        <button class="btn btn-sm btn-success" disabled="@(row.Available <= 0)">Borrow</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

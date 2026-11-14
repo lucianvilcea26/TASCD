@@ -1,0 +1,13 @@
+@page
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+@{
+    ViewData["Title"] = "Access denied";
+    var roles = User.FindAll(TokenClaims.RoleClaim).Select(c => c.Value).ToList();
+}
+<h1 class="h3">Access denied</h1>
+<p>You are logged in as <strong>@User.Identity?.Name</strong>, but your token does not contain the role this page requires.</p>
+<p>Roles in your token for this app:
+    @if (roles.Count == 0) { <em>none</em> } else { <code>@string.Join(", ", roles)</code> }
+</p>
+<p class="text-muted small">Roles are assigned in Keycloak (client roles, directly or through a group) and arrive in the
+    <code>roles</code> claim of the ID token. Open <a href="/Debug/Token">Token</a> to inspect it.</p>
