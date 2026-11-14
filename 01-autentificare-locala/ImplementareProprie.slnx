@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="implementare-proprie/Biblioteca/Biblioteca.csproj" />
+  <Project Path="Secretariat/Secretariat.csproj" />
+</Solution>

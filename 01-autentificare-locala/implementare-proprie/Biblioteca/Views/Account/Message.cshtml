@@ -1,0 +1,11 @@
+@model MessageViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@Model.Title</h1>
+<p>@Model.Text</p>
+@if (Model.LinkAction is not null)
+{
+    <p><a asp-action="@Model.LinkAction" class="btn btn-outline-primary">@Model.LinkText</a></p>
+}

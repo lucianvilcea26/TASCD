@@ -1,0 +1,65 @@
+@model ReaderDetailsViewModel
+@{
+    ViewData["Title"] = "Fișa cititorului";
+    var r = Model.Reader;
+}
+
+<h1>@r.Name</h1>
+<p class="text-muted">Ce știe biblioteca și singurul lucru pe care îl află de la secretariat.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">Ce știe <b>Biblioteca</b></div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr><th>Permis</th><td><code>@r.CardNumber</code></td></tr>
+                    <tr><th>Număr matricol</th><td>@(r.Matricol ?? "–") <span class="text-muted">(identificatorul în contextul secretariatului)</span></td></tr>
+                    <tr><th>Email</th><td>@r.Email (@(r.EmailConfirmed ? "confirmat" : "neconfirmat"))</td></tr>
+                    <tr><th>Rol</th><td>@Model.Role</td></tr>
+                    <tr><th>Încercări greșite</th><td>@r.AccessFailedCount</td></tr>
+                    <tr><th>Blocat până la</th><td>@(r.LockoutEnd is { } end && end > DateTimeOffset.UtcNow ? end.ToLocalTime().ToString("dd.MM.yyyy HH:mm") : "–")</td></tr>
+                    <tr><th>Cont creat</th><td>@r.CreatedUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header">Împrumuturi active</div>
+            <div class="card-body">
+                @if (Model.Loans.Count == 0)
+                {
+                    <p class="mb-0">Niciunul.</p>
+                }
+                else
+                {
+                    <ul class="mb-0">
+                        @foreach (var loan in Model.Loans)
+                        {
+                            <li>@loan.Book.Title, de returnat până la @loan.Due.ToString("dd.MM.yyyy")</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">Ce spune <b>Secretariat</b></div>
+            <div class="card-body">
+                @if (ViewData["SecretariatDown"] is true)
+                {
+                    <p class="mb-0 text-danger">Secretariatul nu răspunde acum.</p>
+                }
+                else if (Model.Enrollment is null)
+                {
+                    <p class="mb-0">Secretariatul nu are o fișă pentru această persoană.</p>
+                }
+                else
+                {
+                    <p>Înmatriculat: <b>@(Model.Enrollment.Enrolled ? "da" : "nu")</b></p>
+                    <p class="mb-0">Valabil până la: @Model.Enrollment.ValidUntil.ToString("dd.MM.yyyy")</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

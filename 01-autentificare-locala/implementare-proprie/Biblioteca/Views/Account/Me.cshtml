@@ -1,0 +1,20 @@
+@using System.Security.Claims
+@model IEnumerable<Claim>
+@{
+    ViewData["Title"] = "Cine sunt eu";
+}
+
+<h1>Cine sunt eu</h1>
+<p class="text-muted">Afirmațiile (claims) pe care aplicația le citește din cookie la fiecare cerere.</p>
+
+<table class="table">
+    <thead>
+        <tr><th>Tip</th><th>Valoare</th><th>Emitent</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var claim in Model)
+        {
+            <tr><td><code>@claim.Type</code></td><td>@claim.Value</td><td>@claim.Issuer</td></tr>
+        }
+    </tbody>
+</table>

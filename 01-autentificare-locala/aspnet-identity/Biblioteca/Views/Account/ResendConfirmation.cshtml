@@ -1,0 +1,25 @@
+@model EmailViewModel
+@{
+    ViewData["Title"] = "Email de confirmare";
+}
+
+<h1>Trimite din nou emailul de confirmare</h1>
+<p class="text-muted">Un link nou anulează linkurile trimise anterior.</p>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ResendConfirmation" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Trimite</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

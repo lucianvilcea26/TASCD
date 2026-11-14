@@ -1,0 +1,7 @@
+@{
+    ViewData["Title"] = "Acces interzis";
+}
+
+<h1>Acces interzis</h1>
+<p>Ești autentificat ca <b>@User.Identity?.Name</b>, dar nu ai dreptul să faci ce ai cerut.</p>
+<p><a asp-controller="Home" asp-action="Index">Înapoi la pagina de start</a></p>

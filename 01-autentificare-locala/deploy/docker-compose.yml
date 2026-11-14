@@ -1,0 +1,14 @@
+# Serverul de email de laborator: primește toate mesajele aplicațiilor și le afișează,
+# fără să le livreze nimănui.
+#   Interfața web : http://localhost:8026
+#   SMTP          : localhost:1026 (folosit de ambele variante ale Bibliotecii)
+# Porturile diferă de cele ale laboratorului 2 (8025), ca laboratoarele să poată rula simultan.
+
+name: autentificare-locala
+
+services:
+  mailpit:
+    image: axllent/mailpit:v1.33.1
+    ports:
+      - "8026:8025"
+      - "1026:1025"

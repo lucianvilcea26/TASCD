@@ -1,0 +1,42 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Cont nou";
+}
+
+<h1>Cont nou de cititor</h1>
+<p class="text-muted">Contul se poate crea doar de studenții înmatriculați. Biblioteca verifică la secretariat numărul matricol
+    și adresa de email, iar linkul de activare ajunge numai la adresa din dosar.</p>
+
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Matricol" class="form-label"></label>
+                <input asp-for="Matricol" class="form-control" placeholder="SIM-2026-0412" />
+                <span asp-validation-for="Matricol" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                <div class="form-text">Cel puțin 10 caractere. O frază lungă este mai sigură decât un cuvânt cu simboluri.</div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Creează contul</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

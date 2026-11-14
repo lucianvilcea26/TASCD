@@ -4,7 +4,7 @@ Codul laboratoarelor pentru cursurile de pe [docs.lucianvilcea.ro](https://docs.
 
 | Folderul | Ce conține | Cursul |
 |---|---|---|
-| [`01-autentificare-locala/`](01-autentificare-locala/) | aplicația Biblioteca (ASP.NET Core MVC) și serviciul web al Secretariatului, cu autentificarea făcută chiar de aplicație | Tehnologii pentru Asigurarea Securității și Confidențialității Datelor |
+| [`01-autentificare-locala/`](01-autentificare-locala/) | aplicația Biblioteca (ASP.NET Core MVC), cu conturi, parole și linkuri prin email gestionate chiar de aplicație, peste EF Core, în două variante (implementare proprie și ASP.NET Core Identity), plus serviciul web al Secretariatului | Tehnologii pentru Asigurarea Securității și Confidențialității Datelor |
 | [`02-identitate-federata-keycloak/`](02-identitate-federata-keycloak/) | aplicațiile Secretariat și Biblioteca (Razor Pages), care își deleagă autentificarea lui Keycloak, plus infrastructura în Docker | Identitate federată cu Keycloak |
 
 Cele două laboratoare spun aceeași poveste în două etape: o bibliotecă universitară care, în primul laborator, își verifică singură utilizatorii și, în al doilea, renunță la parolele proprii în favoarea unui furnizor de identitate comun.
@@ -13,7 +13,8 @@ Cele două laboratoare spun aceeași poveste în două etape: o bibliotecă univ
 
 - SDK-ul .NET 10
 - Git
-- pentru al doilea laborator: Docker Desktop și o aplicație de autentificare (de exemplu Google Authenticator, Microsoft Authenticator sau FreeOTP)
+- Docker Desktop (serverul de email de test al ambelor laboratoare și, în al doilea, Keycloak)
+- pentru al doilea laborator: o aplicație de autentificare (de exemplu Google Authenticator, Microsoft Authenticator sau FreeOTP)
 
 ## Pornire rapidă
 

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="aspnet-identity/Biblioteca/Biblioteca.csproj" />
+  <Project Path="Secretariat/Secretariat.csproj" />
+</Solution>

@@ -1,0 +1,26 @@
+@model IEnumerable<ReaderRow>
+@{
+    ViewData["Title"] = "Cititori";
+}
+
+<h1>Cititori</h1>
+
+<table class="table">
+    <thead>
+        <tr><th>Permis</th><th>Nume</th><th>Email</th><th>Rol</th><th>Număr matricol</th><th>Email confirmat</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model)
+        {
+            var reader = row.Reader;
+            <tr>
+                <td><a asp-action="Details" asp-route-id="@reader.CardNumber">@reader.CardNumber</a></td>
+                <td>@reader.Name</td>
+                <td>@reader.Email</td>
+                <td>@row.Role</td>
+                <td>@(reader.Matricol ?? "–")</td>
+                <td>@(reader.EmailConfirmed ? "da" : "nu")</td>
+            </tr>
+        }
+    </tbody>
+</table>
