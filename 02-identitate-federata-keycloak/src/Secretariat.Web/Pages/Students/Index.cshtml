@@ -3,74 +3,89 @@
 @{
     ViewData["Title"] = "Students";
 }
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h1 class="h3 m-0">Students</h1>
+<div class="u-page-head">
     <div>
-        <a class="btn btn-primary" asp-page="Create">Add student</a>
-        <a class="btn btn-outline-primary" asp-page="Import">Import CSV</a>
+        <div class="u-eyebrow">Registry</div>
+        <h1>Students</h1>
+        <p>Registry data on the left; account state read live from Keycloak through the Admin API on the right.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary" asp-page="Create">@Icons.Svg("user-plus") Add student</a>
+        <a class="btn btn-outline-primary" asp-page="Import">@Icons.Svg("upload") Import CSV</a>
     </div>
 </div>
 
 @if (Model.KeycloakError is not null)
 {
-    <div class="alert alert-warning"><strong>Could not read account state from Keycloak.</strong> @Model.KeycloakError</div>
+    <div class="alert alert-warning"><span><strong>Could not read account state from Keycloak.</strong> @Model.KeycloakError</span></div>
 }
 
 @if (Model.Rows.Count == 0)
 {
-    <p class="text-muted">No students yet. <a asp-page="Create">Add one</a> or <a asp-page="Import">import the sample CSV</a>.</p>
+    <div class="card text-center p-5">
+        <div class="u-feature-ico mx-auto">@Icons.Svg("users")</div>
+        <h2 class="h5">No students yet</h2>
+        <p class="text-muted mb-3"><a asp-page="Create">Add one</a> or <a asp-page="Import">import the sample CSV</a>.</p>
+    </div>
 }
 else
 {
-    <div class="table-responsive">
-    <table class="table table-sm align-middle">
-        <thead>
-            <tr class="small text-muted">
-                <th colspan="4">Registry (Secretariat database)</th>
-                <th colspan="5" class="border-start">Account (live from Keycloak Admin API)</th>
-            </tr>
-            <tr>
-                <th>Student ID</th><th>Name</th><th>Faculty</th><th>Status</th>
-                <th class="border-start">Account</th><th>Email verified</th><th>Password</th><th>MFA</th><th>Sessions</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var row in Model.Rows)
-        {
-            var s = row.Student;
-            var a = row.Account;
-            <tr>
-                <td><a asp-page="Edit" asp-route-id="@s.Id"><code>@s.StudentId</code></a></td>
-                <td>@s.FullName<br /><span class="small text-muted">@s.Email</span></td>
-                <td class="small">@s.Faculty</td>
-                <td><span class="badge @Ui.StatusBadge(s.Status)">@s.Status.ToClaimValue()</span></td>
-                <td class="border-start">
-                    @if (s.KeycloakUserId is null)
-                    {
-                        <span class="badge text-bg-warning">not provisioned</span>
-                    }
-                    else if (a is null && Model.KeycloakError is null)
-                    {
-                        <span class="badge text-bg-danger" title="The registry points to a Keycloak user that no longer exists">missing in Keycloak</span>
-                    }
-                    else if (a is not null)
-                    {
-                        <span class="badge @(a.Enabled ? "text-bg-success" : "text-bg-secondary")">@(a.Enabled ? "enabled" : "disabled")</span>
-                    }
-                    @if (s.LastSyncError is not null)
-                    {
-                        <span class="badge text-bg-danger" title="@s.LastSyncError">sync error</span>
-                    }
-                </td>
-                <td>@(a is null ? "" : a.EmailVerified ? "✅" : "—")</td>
-                <td>@(a is null ? "" : a.HasPassword ? "✅" : "—")</td>
-                <td>@(a is null ? "" : a.HasOtp ? "✅ TOTP" : "—")</td>
-                <td>@a?.ActiveSessions</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <div class="card u-table-card">
+        <div class="table-responsive">
+        <table class="table table-hover align-middle u-student-table">
+            <thead>
+                <tr class="u-group-row">
+                    <th colspan="4">Registry (Secretariat database)</th>
+                    <th colspan="5" class="border-start">Account (live from Keycloak Admin API)</th>
+                </tr>
+                <tr>
+                    <th>Student ID</th><th>Name</th><th>Faculty</th><th>Status</th>
+                    <th class="border-start">Account</th><th>Email verified</th><th>Password</th><th>MFA</th><th>Sessions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var row in Model.Rows)
+            {
+                var s = row.Student;
+                var a = row.Account;
+                <tr>
+                    <td><a asp-page="Edit" asp-route-id="@s.Id" class="u-id">@s.StudentId</a></td>
+                    <td>
+                        <div class="u-person">
+                            <span class="u-avatar">@Icons.Initials(s.FullName)</span>
+                            <div><div class="u-name">@s.FullName</div><div class="u-sub">@s.Email</div></div>
+                        </div>
+                    </td>
+                    <td class="small">@s.Faculty</td>
+                    <td class="u-status-col"><span class="@Ui.StatusBadge(s.Status)">@s.Status.ToClaimValue()</span></td>
+                    <td class="border-start">
+                        @if (s.KeycloakUserId is null)
+                        {
+                            <span class="u-pill u-pill-warning">not provisioned</span>
+                        }
+                        else if (a is null && Model.KeycloakError is null)
+                        {
+                            <span class="u-pill u-pill-danger" title="The registry points to a Keycloak user that no longer exists">missing in Keycloak</span>
+                        }
+                        else if (a is not null)
+                        {
+                            <span class="u-pill @(a.Enabled ? "u-pill-success" : "u-pill-muted")">@(a.Enabled ? "enabled" : "disabled")</span>
+                        }
+                        @if (s.LastSyncError is not null)
+                        {
+                            <span class="u-pill u-pill-danger" title="@s.LastSyncError">sync error</span>
+                        }
+                    </td>
+                    <td>@if (a is not null) { <span class="u-check @(a.EmailVerified ? "" : "no")">@Icons.Svg(a.EmailVerified ? "check" : "clock")</span> }</td>
+                    <td>@if (a is not null) { <span class="u-check @(a.HasPassword ? "" : "no")">@Icons.Svg(a.HasPassword ? "check" : "clock")</span> }</td>
+                    <td>@if (a is not null) { <span class="u-check @(a.HasOtp ? "" : "no")">@Icons.Svg(a.HasOtp ? "check" : "clock") @(a.HasOtp ? "TOTP" : "")</span> }</td>
+                    <td>@a?.ActiveSessions</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        </div>
     </div>
-    <p class="small text-muted">"Email verified", "Password" and "MFA" turn green after the student opens the invitation link,
+    <p class="small text-muted mt-2">"Email verified", "Password" and "MFA" turn green after the student opens the invitation link,
         sets a password and scans the QR code with an authenticator app.</p>
 }

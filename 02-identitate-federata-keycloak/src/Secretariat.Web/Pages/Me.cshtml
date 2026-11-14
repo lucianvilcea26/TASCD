@@ -4,13 +4,19 @@
     ViewData["Title"] = "My record";
     var s = Model.Student;
 }
-<h1 class="h3">My record</h1>
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Student services</div>
+        <h1>My record</h1>
+        <p>Your data as the Secretariat holds it, and an enrollment certificate issued from the live registry.</p>
+    </div>
+</div>
 
 @if (s is null)
 {
     <div class="alert alert-warning">
-        Your token's <code>student_id</code> claim is <code>@(Model.StudentIdClaim ?? "missing")</code>,
-        but there is no such student in the registry.
+        <span>Your token's <code>student_id</code> claim is <code>@(Model.StudentIdClaim ?? "missing")</code>,
+        but there is no such student in the registry.</span>
     </div>
 }
 else
@@ -19,12 +25,18 @@ else
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">Registry data</div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Student ID: <code>@s.StudentId</code></li>
-                    <li class="list-group-item">Name: @s.FullName</li>
-                    <li class="list-group-item">Email: @s.Email</li>
-                    <li class="list-group-item">Faculty: @s.Faculty</li>
-                    <li class="list-group-item">Status: <span class="badge @Ui.StatusBadge(s.Status)">@s.Status.ToClaimValue()</span></li>
+                <div class="card-body pb-2">
+                    <div class="u-person mb-2">
+                        <span class="u-avatar lg">@Icons.Initials(s.FullName)</span>
+                        <div><div class="u-name fs-5">@s.FullName</div><div class="u-sub">@s.Faculty</div></div>
+                    </div>
+                </div>
+                <ul class="u-kv">
+                    <li><span class="k">Student ID</span><span class="v u-id">@s.StudentId</span></li>
+                    <li><span class="k">Name</span><span class="v">@s.FullName</span></li>
+                    <li><span class="k">Email</span><span class="v">@s.Email</span></li>
+                    <li><span class="k">Faculty</span><span class="v">@s.Faculty</span></li>
+                    <li><span class="k">Status</span><span class="v"><span class="@Ui.StatusBadge(s.Status)">@s.Status.ToClaimValue()</span></span></li>
                 </ul>
                 <div class="card-footer small text-muted">
                     Wrong data? Only the Secretariat can change it. In Keycloak these fields are read-only for you
@@ -33,20 +45,20 @@ else
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="card border-@(s.Status == EnrollmentStatus.Enrolled ? "success" : "danger")">
-                <div class="card-header">Enrollment certificate (adeverință)</div>
-                <div class="card-body">
-                    @if (s.Status == EnrollmentStatus.Enrolled)
-                    {
-                        <p>This certifies that <strong>@s.FullName</strong> (<code>@s.StudentId</code>) is enrolled at the
-                            Faculty of @s.Faculty for the current academic year.</p>
-                        <p class="small text-muted mb-0">Issued @DateTime.Now.ToString("yyyy-MM-dd HH:mm") from the live registry.</p>
-                    }
-                    else
-                    {
-                        <p class="mb-0">No certificate can be issued: your status is <strong>@s.Status.ToClaimValue()</strong>.</p>
-                    }
-                </div>
+            <div class="u-certificate">
+                <div class="u-eyebrow text-center" style="color: var(--u-gold)">Universitatea (demo) · Secretariat</div>
+                <h3>Enrollment certificate (adeverință)</h3>
+                @if (s.Status == EnrollmentStatus.Enrolled)
+                {
+                    <p>This certifies that <strong>@s.FullName</strong> (<code>@s.StudentId</code>) is enrolled at the
+                        Faculty of @s.Faculty for the current academic year.</p>
+                    <p class="small text-muted mb-0">Issued @DateTime.Now.ToString("yyyy-MM-dd HH:mm") from the live registry.</p>
+                    <div class="u-seal">Secretariat<br />valid</div>
+                }
+                else
+                {
+                    <p class="mb-0">No certificate can be issued: your status is <strong>@s.Status.ToClaimValue()</strong>.</p>
+                }
             </div>
         </div>
     </div>

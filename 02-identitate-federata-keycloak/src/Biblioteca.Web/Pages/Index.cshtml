@@ -5,18 +5,19 @@
     var isReader = User.IsInRole("reader");
     var status = User.FindFirst("enrollment_status")?.Value;
 }
-<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+<div class="u-page-head">
     <div>
-        <h1 class="h3 mb-1">Catalog</h1>
-        <p class="text-muted mb-0">Students can borrow self-service. The library trusts the <code>enrollment_status</code> claim in their token.</p>
+        <div class="u-eyebrow">Biblioteca</div>
+        <h1>Catalog</h1>
+        <p>Students can borrow self-service. The library trusts the <code>enrollment_status</code> claim in their token.</p>
     </div>
     @if (isReader)
     {
-        <div class="card border-@(status == "enrolled" ? "success" : "danger")">
-            <div class="card-body py-2 small">
+        <div class="card u-tokenbox @(status == "enrolled" ? "" : "bad")">
+            <div class="card-body">
                 Your token says: <code>student_id</code> = <strong>@User.FindFirst("student_id")?.Value</strong>,
                 <code>enrollment_status</code> = <strong>@(status ?? "(missing)")</strong><br />
-                <span class="text-muted">token issued @User.UnixTime("iat")?.ToLocalTime().ToString("HH:mm:ss") ·
+                <span class="text-muted small">token issued @User.UnixTime("iat")?.ToLocalTime().ToString("HH:mm:ss") ·
                     <a href="/Debug/Token">inspect</a></span>
             </div>
         </div>
@@ -27,29 +28,57 @@
     }
 </div>
 
-<table class="table align-middle">
-    <thead><tr><th>Title</th><th>Author</th><th>Year</th><th>Available</th><th></th></tr></thead>
-    <tbody>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div class="u-search flex-grow-1">
+        <input id="filter" type="search" class="form-control" placeholder="Search by title or author" aria-label="Search the catalog" />
+    </div>
+    <span class="small text-muted">@Model.Books.Count titles · @Model.Books.Sum(b => b.Available) copies on the shelves</span>
+</div>
+
+<div class="u-books" id="books">
     @foreach (var row in Model.Books)
     {
-        <tr>
-            <td>@row.Book.Title</td>
-            <td class="small">@row.Book.Author</td>
-            <td>@row.Book.Year</td>
-            <td>@row.Available / @row.Book.Copies</td>
-            <td class="text-end">
-                @if (row.BorrowedByMe)
-                {
-                    <span class="badge text-bg-secondary">borrowed by you</span>
-                }
-                else if (isReader)
-                {
-                    <form method="post" asp-page-handler="Borrow" asp-route-bookId="@row.Book.Id" class="m-0">
-                        <button class="btn btn-sm btn-success" disabled="@(row.Available <= 0)">Borrow</button>
-                    </form>
-                }
-            </td>
-        </tr>
+        <div class="card u-book" data-search="@($"{row.Book.Title} {row.Book.Author}".ToLowerInvariant())">
+            <div class="u-cover p@(row.Book.Id % 7)">
+                <span class="u-cover-title">@row.Book.Title</span>
+                <span class="u-cover-author">@row.Book.Author.Split(',')[0]</span>
+            </div>
+            <div class="card-body">
+                <div class="u-book-title">@row.Book.Title</div>
+                <div class="u-book-meta">@row.Book.Author · @row.Book.Year</div>
+                <div class="u-book-foot">
+                    <div class="u-copies" title="@row.Available of @row.Book.Copies copies available">
+                        @for (var i = 0; i < row.Book.Copies; i++) { <i class="@(i < row.Available ? "" : "out")"></i> }
+                        <span>@row.Available / @row.Book.Copies</span>
+                    </div>
+                    @if (row.BorrowedByMe)
+                    {
+                        <span class="u-pill u-pill-accent">borrowed by you</span>
+                    }
+                    else if (isReader)
+                    {
+                        <form method="post" asp-page-handler="Borrow" asp-route-bookId="@row.Book.Id" class="m-0">
+                            <button class="btn btn-sm btn-success" disabled="@(row.Available <= 0)">Borrow</button>
+                        </form>
+                    }
+                    else if (row.Available <= 0)
+                    {
+                        <span class="u-pill u-pill-muted">all on loan</span>
+                    }
+                </div>
+            </div>
+        </div>
     }
-    </tbody>
-</table>
+</div>
+
+@section Scripts {
+    <script>
+        // Client-side filter: the catalog is small, so it is all on the page already.
+        document.getElementById('filter').addEventListener('input', e => {
+            const q = e.target.value.trim().toLowerCase();
+            document.querySelectorAll('#books .u-book').forEach(card => {
+                card.style.display = card.dataset.search.includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}

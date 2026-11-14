@@ -1,31 +1,10 @@
-html {
-  font-size: 14px;
-}
+/* Biblioteca-specific styles. The shared design system is _content/Universitate.Shared/css/universitate.css. */
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
+/* Book cover palettes, picked by book id. */
+.u-cover.p0 { --c1: #1f5f73; --c2: #0f3b4a; }
+.u-cover.p1 { --c1: #8a3b2e; --c2: #5a2219; }
+.u-cover.p2 { --c1: #3c5a2a; --c2: #253a19; }
+.u-cover.p3 { --c1: #5b3a7a; --c2: #3a2452; }
+.u-cover.p4 { --c1: #9a6a1c; --c2: #6b4610; }
+.u-cover.p5 { --c1: #2d4a86; --c2: #1b2f59; }
+.u-cover.p6 { --c1: #7a2f4f; --c2: #4f1b33; }

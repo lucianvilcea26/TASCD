@@ -6,9 +6,9 @@ public static class Ui
 {
     public static string StatusBadge(EnrollmentStatus status) => status switch
     {
-        EnrollmentStatus.Enrolled => "text-bg-success",
-        EnrollmentStatus.Suspended => "text-bg-danger",
-        _ => "text-bg-secondary",
+        EnrollmentStatus.Enrolled => "u-pill u-pill-success",
+        EnrollmentStatus.Suspended => "u-pill u-pill-danger",
+        _ => "u-pill u-pill-muted",
     };
 
     public static string Local(DateTime? utc) =>

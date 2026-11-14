@@ -10,28 +10,54 @@
         .OrderByDescending(l => l.LoanedAtUtc)
         .ToListAsync();
 }
-<h1 class="h3">My loans</h1>
-<p class="text-muted">Books are returned at the lending desk.</p>
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Your account</div>
+        <h1>My loans</h1>
+        <p>Books are returned at the lending desk.</p>
+    </div>
+    <span class="u-pill u-pill-accent plain">@loans.Count(l => l.IsActive) on loan now</span>
+</div>
 
 @if (loans.Count == 0)
 {
-    <p>No loans yet. <a asp-page="/Index">Browse the catalog</a>.</p>
+    <div class="card text-center p-5">
+        <div class="u-feature-ico mx-auto">@Icons.Svg("books")</div>
+        <h2 class="h5">No loans yet</h2>
+        <p class="text-muted mb-0"><a asp-page="/Index">Browse the catalog</a>.</p>
+    </div>
 }
 else
 {
-    <table class="table table-sm">
-        <thead><tr><th>Book</th><th>Borrowed</th><th>Due</th><th>Returned</th><th>How enrollment was checked</th></tr></thead>
-        <tbody>
-        @foreach (var l in loans)
-        {
-            <tr class="@(l.IsActive ? "" : "text-muted")">
-                <td>@l.Book.Title</td>
-                <td>@l.LoanedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                <td>@l.DueAtUtc.ToLocalTime().ToString("yyyy-MM-dd")</td>
-                <td>@(l.ReturnedAtUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
-                <td class="small"><span class="badge text-bg-light border">@l.Channel</span> @l.EnrollmentEvidence</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <div class="card u-table-card">
+        <table class="table align-middle">
+            <thead><tr><th>Book</th><th>Borrowed</th><th>Due</th><th>Returned</th><th>How enrollment was checked</th></tr></thead>
+            <tbody>
+            @foreach (var l in loans)
+            {
+                <tr class="@(l.IsActive ? "" : "text-muted")">
+                    <td>
+                        <div class="u-person">
+                            <span class="u-cover p@(l.Book.Id % 7)" style="height: 44px; width: 32px; padding: 0; border-radius: 4px;"></span>
+                            <div><div class="u-name">@l.Book.Title</div><div class="u-sub">@l.Book.Author</div></div>
+                        </div>
+                    </td>
+                    <td class="small">@l.LoanedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (l.IsActive)
+                        {
+                            <span class="u-pill @(l.DueAtUtc < DateTime.UtcNow ? "u-pill-danger" : "u-pill-accent")">@l.DueAtUtc.ToLocalTime().ToString("yyyy-MM-dd")</span>
+                        }
+                        else
+                        {
+                            <span class="small">@l.DueAtUtc.ToLocalTime().ToString("yyyy-MM-dd")</span>
+                        }
+                    </td>
+                    <td class="small">@(l.ReturnedAtUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                    <td class="small"><span class="u-pill u-pill-muted plain">@l.Channel</span> @l.EnrollmentEvidence</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 }

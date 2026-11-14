@@ -2,20 +2,23 @@
 @if (User.Identity?.IsAuthenticated == true)
 {
     var roles = string.Join(", ", User.FindAll(TokenClaims.RoleClaim).Select(c => c.Value));
-    <div class="d-flex align-items-center gap-2">
-        <span class="navbar-text small">
-            <strong>@User.Identity.Name</strong>
-            @if (roles.Length > 0) { <span class="opacity-75">(@roles)</span> }
+    var fullName = User.FindFirst("name")?.Value ?? User.Identity.Name;
+    <div class="u-user">
+        <span class="u-avatar" title="@fullName">@Icons.Initials(fullName)</span>
+        <span class="navbar-text">
+            @fullName
+            <small>@User.Identity.Name @if (roles.Length > 0) { <span>· @roles</span> }</small>
         </span>
-        <a class="btn btn-sm btn-outline-light" href="/Debug/Token">Token</a>
+        <span class="u-divider d-none d-md-block"></span>
+        <a class="btn btn-sm btn-ghost" href="/Debug/Token" title="Inspect the tokens this app received">@Icons.Svg("code") Token</a>
         <form method="post" action="/account/logout" class="m-0">
             @Html.AntiForgeryToken()
-            <button type="submit" class="btn btn-sm btn-light">Log out</button>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">@Icons.Svg("logout") Log out</button>
         </form>
     </div>
 }
 else
 {
-    <a class="btn btn-sm btn-light"
-       href="/account/login?returnUrl=@Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString)">Log in</a>
+    <a class="btn btn-primary"
+       href="/account/login?returnUrl=@Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString)">@Icons.Svg("login") Log in</a>
 }

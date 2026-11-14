@@ -3,15 +3,35 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Secretariat</title>
+    <title>@ViewData["Title"] · Secretariat</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/_content/Universitate.Shared/css/universitate.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-md navbar-dark bg-primary mb-4">
+@{
+    var page = ViewContext.RouteData.Values["page"] as string ?? "";
+    string Active(string prefix) => page.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
+<body class="app-secretariat">
+    <div class="u-topbar">
+        <div class="container">
+            <span class="u-uni">@Icons.Svg("university") Universitatea (demo)</span>
+            <nav class="u-apps" aria-label="University applications">
+                <a class="current" href="http://localhost:5001/">Secretariat</a>
+                <a href="http://localhost:5002/">Biblioteca</a>
+            </nav>
+        </div>
+    </div>
+    <header class="u-header">
+        <nav class="navbar navbar-expand-md">
             <div class="container">
-                <a class="navbar-brand fw-semibold" href="/">🎓 Secretariat</a>
+                <a class="u-brand me-4" href="/">
+                    <span class="u-logo">@Icons.Svg("cap", "")</span>
+                    <span>
+                        <span class="u-brand-name d-block">Secretariat</span>
+                        <span class="u-brand-sub d-block">Student registry</span>
+                    </span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
                         aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,13 +40,13 @@
                     <ul class="navbar-nav me-auto">
                         @if (User.IsInRole("secretary"))
                         {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Students/Index">Students</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Students/Create">Add student</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Students/Import">Import CSV</a></li>
+                            <li class="nav-item"><a class="nav-link @(page is "/Students/Index" or "/Students/Edit" ? "active" : "")" asp-page="/Students/Index">Students</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("/Students/Create")" asp-page="/Students/Create">Add student</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("/Students/Import")" asp-page="/Students/Import">Import CSV</a></li>
                         }
                         @if (User.IsInRole("student"))
                         {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Me">My record</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("/Me")" asp-page="/Me">My record</a></li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -34,20 +54,22 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <main role="main" class="u-main">
+        <div class="container">
             @if (TempData["Message"] is string message)
             {
                 <div class="alert alert-info">@message</div>
             }
             @RenderBody()
-        </main>
-    </div>
-    <footer class="border-top footer text-muted small">
-        <div class="container py-2">
-            Demo app · identity provider: Keycloak realm <code>universitate</code> ·
-            <a href="http://localhost:8080/admin/master/console/#/universitate">admin console</a> ·
-            <a href="http://localhost:8025">Mailpit</a>
+        </div>
+    </main>
+    <footer class="u-footer">
+        <div class="container">
+            <span>Secretariat · demo application of the identity course · sign-in by Keycloak, realm <code>universitate</code></span>
+            <span>
+                <a href="http://localhost:8080/admin/master/console/#/universitate">Admin console</a> ·
+                <a href="http://localhost:8025">Mailpit</a>
+            </span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -3,48 +3,61 @@
 @{
     ViewData["Title"] = "Import students";
 }
-<h1 class="h3">Import students from CSV</h1>
-<p class="text-muted">Every row goes through the same steps as <a asp-page="Create">Add student</a>: registry first, then the Keycloak Admin API.
-    Try the <a href="~/samples/students.csv" download>sample file</a> (5 students).</p>
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Registry</div>
+        <h1>Import students from CSV</h1>
+        <p>Every row goes through the same steps as <a asp-page="Create">Add student</a>: registry first, then the Keycloak Admin API.
+            Try the <a href="~/samples/students.csv" download>sample file</a> (5 students).</p>
+    </div>
+</div>
 
-<form method="post" enctype="multipart/form-data" class="card card-body mb-4">
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="mb-3">
-        <label asp-for="CsvFile" class="form-label">CSV file (<code>student_id,first_name,last_name,email,faculty</code>)</label>
-        <input asp-for="CsvFile" type="file" accept=".csv,text/csv" class="form-control" />
+<form method="post" enctype="multipart/form-data" class="card mb-4">
+    <div class="card-body">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="u-dropzone mb-3">
+            <label asp-for="CsvFile" class="form-label">@Icons.Svg("upload") CSV file (<code>student_id,first_name,last_name,email,faculty</code>)</label>
+            <input asp-for="CsvFile" type="file" accept=".csv,text/csv" class="form-control" />
+        </div>
+        <div class="form-check">
+            <input asp-for="SendInvitations" class="form-check-input" />
+            <label asp-for="SendInvitations" class="form-check-label">Send invitation emails</label>
+        </div>
     </div>
-    <div class="form-check mb-3">
-        <input asp-for="SendInvitations" class="form-check-input" />
-        <label asp-for="SendInvitations" class="form-check-label">Send invitation emails</label>
-    </div>
-    <div><button type="submit" class="btn btn-primary">Import</button></div>
+    <div class="card-footer"><button type="submit" class="btn btn-primary">@Icons.Svg("upload") Import</button></div>
 </form>
 
 @if (Model.Results.Count > 0)
 {
-    <h2 class="h5">Result: @Model.Results.Count(r => r.Ok) of @Model.Results.Count rows provisioned</h2>
-    <table class="table table-sm">
-        <thead><tr><th>Line</th><th>Student ID</th><th>Name</th><th>Outcome</th></tr></thead>
-        <tbody>
-        @foreach (var r in Model.Results)
-        {
-            <tr class="@(r.Ok ? "" : "table-warning")">
-                <td>@r.Line</td>
-                <td>
-                    @if (r.Id is int id)
-                    {
-                        <a asp-page="Edit" asp-route-id="@id"><code>@r.StudentId</code></a>
-                    }
-                    else
-                    {
-                        <code>@r.StudentId</code>
-                    }
-                </td>
-                <td>@r.Name</td>
-                <td>@(r.Ok ? "✅ " : "⚠️ ")@r.Outcome</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-    <a asp-page="Index" class="btn btn-outline-primary">Go to the student list</a>
+    var ok = Model.Results.Count(r => r.Ok);
+    <div class="card u-table-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="h6 m-0">Result: @ok of @Model.Results.Count rows provisioned</h2>
+            <span class="u-pill @(ok == Model.Results.Count ? "u-pill-success" : "u-pill-warning")">@(ok == Model.Results.Count ? "all rows imported" : "some rows need attention")</span>
+        </div>
+        <table class="table align-middle">
+            <thead><tr><th>Line</th><th>Student ID</th><th>Name</th><th>Outcome</th></tr></thead>
+            <tbody>
+            @foreach (var r in Model.Results)
+            {
+                <tr class="@(r.Ok ? "" : "table-warning")">
+                    <td class="text-muted">@r.Line</td>
+                    <td>
+                        @if (r.Id is int id)
+                        {
+                            <a asp-page="Edit" asp-route-id="@id" class="u-id">@r.StudentId</a>
+                        }
+                        else
+                        {
+                            <span class="u-id">@r.StudentId</span>
+                        }
+                    </td>
+                    <td>@r.Name</td>
+                    <td><span class="u-check @(r.Ok ? "" : "no")" style="@(r.Ok ? "" : "color: var(--u-warning)")">@Icons.Svg(r.Ok ? "check" : "x")</span> @r.Outcome</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <div class="card-footer"><a asp-page="Index" class="btn btn-sm btn-outline-primary">Go to the student list @Icons.Svg("arrow-right")</a></div>
+    </div>
 }
