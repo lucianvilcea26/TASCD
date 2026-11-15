@@ -1,9 +1,11 @@
 using Cursuri.Models;
 using Cursuri.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cursuri.Controllers;
 
+[Authorize]
 public class PeopleController(IPlatformRegistry platform, ISecretariatRegistry secretariat) : Controller
 {
     public IActionResult Index()
