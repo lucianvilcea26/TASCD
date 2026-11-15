@@ -12,7 +12,7 @@ Caddy obține singur certificatele Let's Encrypt și trimite cererile către con
 
 ## Ce diferă față de laborator
 
-* **Adresele.** `render-realm.py` pornește de la `deploy/keycloak/realm-universitate.json` și înlocuiește `http://localhost:5001` și `http://localhost:5002` cu adresele publice. Deconectarea pe canalul din spate merge direct la containere (`http://secretariat:8080/backchannel-logout`).
+* **Adresele.** `render-realm.py` pornește de la `deploy/keycloak/realm-universitate.json` și înlocuiește `http://localhost:5001` și `http://localhost:5002` cu adresele publice. Back-channel logout-ul merge direct la containere (`http://secretariat:8080/backchannel-logout`).
 * **Secretele.** Parola contului `admin`, parola bazei de date, secretele celor doi clienți și parolele conturilor `secretara` și `bibliotecar` sunt generate aleator de `init-env.sh` în `.env`. Parolele din README-ul laboratorului nu funcționează pe server, fiindcă sunt publice.
 * **Aplicațiile** sunt construite din `src/` cu `Dockerfile` și primesc configurația prin variabile de mediu (`Keycloak__Authority`, `Links__Biblioteca` etc.). În interiorul rețelei Docker, numele publice indică tot spre Caddy, așa că aplicațiile ajung la Keycloak prin aceleași adrese HTTPS ca browserul.
 
