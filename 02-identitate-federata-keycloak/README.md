@@ -1,6 +1,6 @@
 # Laboratorul 2: identitate federată cu Keycloak
 
-Două aplicații .NET 10 Razor Pages ale unei universități fictive, care împart același identity provider, Keycloak. Laboratorul cursului **Identitate federată cu Keycloak** de pe [docs.lucianvilcea.ro](https://docs.lucianvilcea.ro); căile din paginile cursului sunt relative la acest folder.
+Două aplicații .NET 10 Razor Pages ale unei universități fictive, care împart același identity provider, Keycloak. Laboratorul săptămânilor 2 și 3 ale cursului **Tehnologii pentru Asigurarea Securității și Confidențialității Datelor** de pe [docs.lucianvilcea.ro](https://docs.lucianvilcea.ro); căile din paginile acestor săptămâni sunt relative la acest folder.
 
 | Aplicația | Adresa | Rolul ei |
 |---|---|---|

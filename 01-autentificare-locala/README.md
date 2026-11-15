@@ -4,8 +4,8 @@ Biblioteca universitară din cursul **Tehnologii pentru Asigurarea Securității
 
 | Folderul | Cum sunt construite conturile | Soluția |
 |---|---|---|
-| [`implementare-proprie/`](implementare-proprie/) | de mână: entitatea `User`, `PasswordHasher<T>` pentru parole, `AccountService` cu toate regulile, linkuri păstrate ca amprente SHA-256 | `ImplementareProprie.slnx` |
-| [`aspnet-identity/`](aspnet-identity/) | cu ASP.NET Core Identity: `IdentityUser`, `UserManager`, `SignInManager`, jetoane `DataProtectorTokenProvider` | `AspNetIdentity.slnx` |
+| [`implementare-proprie/`](implementare-proprie/) | de mână: entitatea `User`, `PasswordHasher<T>` pentru parole, `AccountService` cu toate regulile, linkuri păstrate ca hash-uri SHA-256 | `ImplementareProprie.slnx` |
+| [`aspnet-identity/`](aspnet-identity/) | cu ASP.NET Core Identity: `IdentityUser`, `UserManager`, `SignInManager`, token-uri `DataProtectorTokenProvider` | `AspNetIdentity.slnx` |
 
 Ambele folosesc același serviciu web al secretariatului, din [`Secretariat/`](Secretariat/), și același server de email de laborator.
 
@@ -18,7 +18,7 @@ Ambele folosesc același serviciu web al secretariatului, din [`Secretariat/`](S
 | Autentificarea | cu adresa de email și parola; același mesaj pentru email inexistent și parolă greșită |
 | Blocarea contului | după 5 parole greșite la rând, contul este blocat 5 minute, chiar și pentru parola corectă |
 | Ieșirea | închide sesiunea (cookie-ul) |
-| Schimbarea parolei | cere parola curentă; schimbă ștampila de securitate, deci celelalte sesiuni ale contului se închid la următoarea cerere; titularul primește un email de notificare |
+| Schimbarea parolei | cere parola curentă; schimbă security stamp-ul, deci celelalte sesiuni ale contului se închid la următoarea cerere; titularul primește un email de notificare |
 | Parola uitată | un link prin email (valabil o oră, o singură dată) pentru alegerea unei parole noi; răspunsul paginii este același pentru adrese cu și fără cont; resetarea închide sesiunile deschise cu parola veche |
 
 Regulile pentru parole: cel puțin 10 caractere, cel mult 128, fără adresa de email în ea și fără reguli de compoziție (majuscule, cifre, simboluri), cum recomandă NIST SP 800-63B. Laboratorul rămâne sub revizia 4 a ghidului, care cere cel puțin 15 caractere când parola este singurul factor și verificarea parolelor noi într-o listă de parole compromise. Biblioteca păstrează celelalte funcții: catalogul, împrumutul cu politica `CanBorrow` (înmatriculat acum, după secretariat, și cel mult 3 cărți) și fișele cititorilor, pentru bibliotecar.
@@ -83,13 +83,13 @@ Aplicația aplică migrările singură la pornire (`Database.MigrateAsync()` în
 
 | Regula | Implementare proprie | ASP.NET Core Identity |
 |---|---|---|
-| amprenta parolei | `AccountService`, cu `PasswordHasher<User>` | `UserManager.CreateAsync`, același `PasswordHasher` |
+| hash-ul parolei | `AccountService`, cu `PasswordHasher<User>` | `UserManager.CreateAsync`, același `PasswordHasher` |
 | politica parolei | `AccountService.CheckPassword` | `PasswordOptions` în `Program.cs` și `EmailNotInPasswordValidator` |
 | blocarea | `AccountService.LoginAsync` (`FailedLoginCount`, `LockoutEndUtc`) | `LockoutOptions` și `CheckPasswordSignInAsync(..., lockoutOnFailure: true)` |
 | emailul confirmat | `AccountService.LoginAsync` | `SignInOptions.RequireConfirmedEmail` |
-| linkurile din email | tabelul `UserTokens`: valoare aleatoare de 256 de biți, în bază doar amprenta SHA-256 | `DataProtectorTokenProvider`: date protejate criptografic, nimic în bază |
-| închiderea celorlalte sesiuni | ștampila din cookie, comparată la fiecare cerere în `UserPrincipal.ValidateStampAsync` | `SecurityStampValidator`, cu `ValidationInterval` pus pe zero |
-| afirmațiile sesiunii | `UserPrincipal.Create` | `BibliotecaClaimsFactory` |
+| linkurile din email | tabelul `UserTokens`: valoare aleatoare de 256 de biți, în bază doar hash-ul SHA-256 | `DataProtectorTokenProvider`: date protejate criptografic, nimic în bază |
+| închiderea celorlalte sesiuni | security stamp-ul din cookie, comparat la fiecare cerere în `UserPrincipal.ValidateStampAsync` | `SecurityStampValidator`, cu `ValidationInterval` pus pe zero |
+| claim-urile sesiunii | `UserPrincipal.Create` | `BibliotecaClaimsFactory` |
 | mesajele în română | scrise direct în cod | `RomanianIdentityErrorDescriber` |
 
 ## Diferențe observate între variante
@@ -112,4 +112,4 @@ Aceleași teste automate trec pe ambele variante, dar Identity se comportă dife
 - Ștampila se verifică la fiecare cerere, cu o interogare a bazei; cu mulți utilizatori, un interval de câteva minute este un compromis obișnuit.
 - Nu există limitare a numărului de cereri pe adresă IP; blocarea pe cont oprește ghicirea parolei unui cont, nu încercarea aceleiași parole pe multe conturi.
 
-Starea codului de la finalul fiecărui exercițiu din forma anterioară a laboratorului este păstrată în ramurile `exercise-01` … `exercise-27`. Laboratorul următor, din folderul [`../02-identitate-federata-keycloak/`](../02-identitate-federata-keycloak/), mută autentificarea la un furnizor de identitate comun, Keycloak.
+Starea codului de la finalul fiecărui exercițiu din forma anterioară a laboratorului este păstrată în branch-urile `exercise-01` … `exercise-27`. Laboratorul următor, din folderul [`../02-identitate-federata-keycloak/`](../02-identitate-federata-keycloak/), mută autentificarea la un identity provider comun, Keycloak.
