@@ -1,0 +1,26 @@
+@model IdentityRecord
+
+<div class="card mb-3">
+    <div class="card-header">What <b>@Model.Context</b> knows</div>
+    <div class="card-body">
+        <h6>Identifiers</h6>
+        <ul>
+            @foreach (var id in Model.Identifiers)
+            {
+                <li><code>@id.Value</code> <span class="text-muted">in the context @id.Context</span></li>
+            }
+        </ul>
+        <h6>Attributes</h6>
+        <table class="table table-sm">
+            <thead>
+                <tr><th>Name</th><th>Value</th><th>Issuer</th><th>Valid until</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.Attributes)
+                {
+                    <tr><td>@a.Name</td><td>@a.Value</td><td>@a.Issuer</td><td>@(a.ValidUntil?.ToString("yyyy-MM-dd") ?? "-")</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

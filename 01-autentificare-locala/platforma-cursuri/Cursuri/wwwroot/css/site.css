@@ -1,0 +1,6 @@
+/* Cursuri: ajustări doar pentru platformă. Tema comună a universității este în universitate.css. */
+
+/* Textul mic de deasupra titlului, pe fundalul colorat al paginii de start. */
+.u-hero .u-eyebrow {
+  color: rgba(255, 255, 255, .75);
+}

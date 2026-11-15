@@ -32,6 +32,12 @@ body.app-biblioteca {
   --u-bg: #f6f3ec;
 }
 
+body.app-cursuri {
+  --u-accent: #7b2d5b; --u-accent-700: #5f2246; --u-accent-50: #f6ecf2; --u-accent-100: #ecd6e4;
+  --u-gold: #b8903a;
+  --u-bg: #f7f3f6;
+}
+
 body {
   background: var(--u-bg);
   color: var(--u-ink);

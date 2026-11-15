@@ -1,0 +1,43 @@
+@model IEnumerable<IdentityRecord>
+@{
+    ViewData["Title"] = "Secretariat";
+    var today = DateOnly.FromDateTime(DateTime.Today);
+}
+
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Simulated registry</div>
+        <h1>Secretariat</h1>
+        <p>What the Secretariat knows about its students, simulated inside the platform.</p>
+    </div>
+</div>
+
+<div class="card u-table-card">
+    <table class="table table-hover">
+        <thead>
+            <tr><th>Matricol</th><th>Name</th><th>Faculty</th><th>Enrollment</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                var enrollment = student.Attributes.First(a => a.Name == "înmatriculare");
+                <tr>
+                    <td class="u-id">@student.IdentifierIn(Contexts.Secretariat)</td>
+                    <td>@student.Attribute("nume")</td>
+                    <td>@student.Attribute("facultate")</td>
+                    <td>
+                        <code>@enrollment.Value</code> until @enrollment.ValidUntil?.ToString("yyyy-MM-dd")
+                        @if (enrollment.IsValidOn(today))
+                        {
+                            <span class="u-pill u-pill-success">valid</span>
+                        }
+                        else
+                        {
+                            <span class="u-pill u-pill-danger">expired</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

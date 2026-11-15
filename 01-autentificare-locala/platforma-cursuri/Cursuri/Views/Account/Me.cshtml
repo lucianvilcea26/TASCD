@@ -1,0 +1,27 @@
+@using System.Security.Claims
+@model IEnumerable<Claim>
+@{
+    ViewData["Title"] = "Who am I";
+}
+
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Session</div>
+        <h1>Who am I</h1>
+        <p>The claims the app reads from the cookie on every request.</p>
+    </div>
+</div>
+
+<div class="card u-table-card">
+    <table class="table">
+        <thead>
+            <tr><th>Type</th><th>Value</th><th>Issuer</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in Model)
+            {
+                <tr><td><code>@claim.Type</code></td><td>@claim.Value</td><td>@claim.Issuer</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

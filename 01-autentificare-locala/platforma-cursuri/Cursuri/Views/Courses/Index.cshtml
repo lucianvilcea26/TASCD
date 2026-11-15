@@ -1,0 +1,32 @@
+@model IEnumerable<Course>
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Catalog</div>
+        <h1>Courses</h1>
+        <p>The courses offered on the platform this year.</p>
+    </div>
+</div>
+
+<div class="card u-table-card">
+    <table class="table table-hover">
+        <thead>
+            <tr><th>Code</th><th>Title</th><th>Teacher</th><th>Semester</th><th>Credits</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td class="u-id">@course.Code</td>
+                    <td>@course.Title</td>
+                    <td>@course.Teacher</td>
+                    <td>@course.Semester</td>
+                    <td>@course.Credits</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

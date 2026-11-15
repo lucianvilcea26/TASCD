@@ -9,6 +9,8 @@ Biblioteca universitară din cursul **Tehnologii pentru Asigurarea Securității
 
 Ambele folosesc același serviciu web al secretariatului, din [`Secretariat/`](Secretariat/), și același server de email de laborator.
 
+Folderul [`platforma-cursuri/`](platforma-cursuri/) conține aplicația construită pas cu pas în exercițiile 1-14 ale cursului: platforma de cursuri Cursuri (MVC, conturi în memorie, parolă verificată cu `PasswordHasher`, autentificare cu cookie), cu soluția ei, `TASCD.slnx`, și propriul [README](platforma-cursuri/README.md).
+
 ## Fluxurile
 
 | Fluxul | Ce se întâmplă |

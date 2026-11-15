@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · Cursuri</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/universitate.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+@{
+    var controller = ViewContext.RouteData.Values["controller"] as string ?? "";
+    string Active(string name) => controller == name ? "active" : "";
+}
+<body class="app-cursuri">
+    <div class="u-topbar">
+        <div class="container">
+            <span class="u-uni">
+                <svg class="u-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21v-9M9.5 21v-9M14.5 21v-9M19 21v-9M2 9.5 12 3l10 6.5Z" /></svg>
+                Universitatea (demo)
+            </span>
+            <nav class="u-apps" aria-label="University applications">
+                <a href="http://localhost:5001">Secretariat</a>
+                <a href="http://localhost:5002">Biblioteca</a>
+                <a class="current" href="/">Cursuri</a>
+            </nav>
+        </div>
+    </div>
+    <header class="u-header">
+        <nav class="navbar navbar-expand-md">
+            <div class="container">
+                <a class="u-brand me-4" asp-controller="Home" asp-action="Index">
+                    <span class="u-logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2ZM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z" /></svg>
+                    </span>
+                    <span>
+                        <span class="u-brand-name d-block">Cursuri</span>
+                        <span class="u-brand-sub d-block">Online courses</span>
+                    </span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+                        aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div id="nav" class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Courses")" asp-controller="Courses" asp-action="Index">Courses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @Active("People")" asp-controller="People" asp-action="Index">People</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Secretariat")" asp-controller="Secretariat" asp-action="Index">Secretariat</a>
+                        </li>
+                    </ul>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="u-user">
+                            <span class="u-avatar">@string.Concat(User.Identity.Name!.Split(' ').Select(part => part[0]))</span>
+                            <a class="navbar-text text-decoration-none" asp-controller="Account" asp-action="Me">
+                                @User.Identity.Name
+                                <small>@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</small>
+                            </a>
+                            <span class="u-divider d-none d-md-block"></span>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Log out</button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Log in</a>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main role="main" class="u-main">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+    <footer class="u-footer">
+        <div class="container">
+            <span>Cursuri · demo application of the identity course · local accounts</span>
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

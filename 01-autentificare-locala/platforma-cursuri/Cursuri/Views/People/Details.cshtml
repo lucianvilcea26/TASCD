@@ -1,0 +1,28 @@
+@model PersonDetailsViewModel
+@{
+    ViewData["Title"] = Model.Platform.Attribute("nume");
+}
+
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Person</div>
+        <h1>@Model.Platform.Attribute("nume")</h1>
+        <p>The same person, as two different organizations know them.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <partial name="_IdentityRecord" model="Model.Platform" />
+    </div>
+    <div class="col-md-6">
+        @if (Model.Secretariat is not null)
+        {
+            <partial name="_IdentityRecord" model="Model.Secretariat" />
+        }
+        else
+        {
+            <div class="alert alert-info">The Secretariat has no record for this person.</div>
+        }
+    </div>
+</div>

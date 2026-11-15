@@ -1,0 +1,31 @@
+@model IEnumerable<IdentityRecord>
+@{
+    ViewData["Title"] = "People";
+}
+
+<div class="u-page-head">
+    <div>
+        <div class="u-eyebrow">Platform accounts</div>
+        <h1>People</h1>
+        <p>The students and teachers who have an account on the platform.</p>
+    </div>
+</div>
+
+<div class="card u-table-card">
+    <table class="table table-hover">
+        <thead>
+            <tr><th>Username</th><th>Name</th><th>Role</th><th>Matricol</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var account in Model)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@account.IdentifierIn(Contexts.Cursuri)" class="u-id">@account.IdentifierIn(Contexts.Cursuri)</a></td>
+                    <td>@account.Attribute("nume")</td>
+                    <td><span class="u-pill u-pill-accent">@account.Attribute("rol")</span></td>
+                    <td class="u-id">@(account.IdentifierIn(Contexts.Secretariat) ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
