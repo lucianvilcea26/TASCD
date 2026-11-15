@@ -1,4 +1,4 @@
-# Caddy obtains and renews the Let's Encrypt certificates for the three names by itself.
+# Caddy obtains and renews the Let's Encrypt certificates for the four names by itself.
 idp.{$DOMAIN} {
 	reverse_proxy keycloak:8080
 }
@@ -9,4 +9,8 @@ secretariat.{$DOMAIN} {
 
 biblioteca.{$DOMAIN} {
 	reverse_proxy biblioteca:8080
+}
+
+platformacursuri.{$DOMAIN} {
+	reverse_proxy cursuri:8080
 }

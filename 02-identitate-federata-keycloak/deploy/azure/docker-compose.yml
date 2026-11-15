@@ -2,6 +2,7 @@
 #   https://idp.${DOMAIN}          Keycloak (admin console: /admin)
 #   https://secretariat.${DOMAIN}  Secretariat
 #   https://biblioteca.${DOMAIN}   Biblioteca
+#   https://platformacursuri.${DOMAIN}  course platform of exercises 1-14 (local accounts, no Keycloak)
 # Mailpit is not public: ssh -L 8025:127.0.0.1:8025 azureuser@<server>, then http://localhost:8025
 # Secrets live in .env (created by ./init-env.sh, never committed).
 
@@ -28,6 +29,7 @@ services:
           - idp.${DOMAIN}
           - secretariat.${DOMAIN}
           - biblioteca.${DOMAIN}
+          - platformacursuri.${DOMAIN}
 
   postgres:
     image: postgres:17-alpine
@@ -118,6 +120,34 @@ services:
     depends_on:
       - keycloak
 
+  cursuri:
+    # The platform lives in another folder of the repository (01-autentificare-locala/platforma-cursuri).
+    # On the server, where only this lab folder is copied, CURSURI_SRC in .env points to its copy.
+    # It needs no database: courses, accounts and the simulated registry are seed data in memory.
+    build:
+      context: ${CURSURI_SRC:-../../../01-autentificare-locala/platforma-cursuri}
+      args:
+        DOMAIN: ${DOMAIN}
+      dockerfile_inline: |
+        FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+        ARG DOMAIN
+        WORKDIR /src
+        COPY . .
+        # The layout links the other two apps at their lab addresses; on the server they get the public ones.
+        RUN sed -i "s#http://localhost:5001#https://secretariat.$${DOMAIN}#; s#http://localhost:5002#https://biblioteca.$${DOMAIN}#" Cursuri/Views/Shared/_Layout.cshtml \
+         && dotnet publish Cursuri/Cursuri.csproj -c Release -o /out
+        FROM mcr.microsoft.com/dotnet/aspnet:10.0
+        WORKDIR /app
+        COPY --from=build /out ./
+        RUN mkdir -p /home/app/.aspnet/DataProtection-Keys && chown -R app:app /home/app/.aspnet
+        USER app
+        ENV ASPNETCORE_HTTP_PORTS=8080 ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+        EXPOSE 8080
+        ENTRYPOINT ["dotnet", "Cursuri.dll"]
+    restart: unless-stopped
+    volumes:
+      - cursuri-keys:/home/app/.aspnet/DataProtection-Keys
+
 volumes:
   caddy-data:
   caddy-config:
@@ -126,3 +156,4 @@ volumes:
   secretariat-keys:
   biblioteca-data:
   biblioteca-keys:
+  cursuri-keys:

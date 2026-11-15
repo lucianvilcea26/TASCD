@@ -7,6 +7,7 @@ Aceeași configurație ca în `deploy/`, pe o singură mașină Linux, în spate
 | `https://idp.<domeniu>` | Keycloak (consola: `/admin`) |
 | `https://secretariat.<domeniu>` | Secretariat |
 | `https://biblioteca.<domeniu>` | Biblioteca |
+| `https://platformacursuri.<domeniu>` | platforma de cursuri din exercițiile 1-14 (conturi locale, fără Keycloak) |
 
 Caddy obține singur certificatele Let's Encrypt și trimite cererile către containere. Keycloak rulează în mod de producție (`start`), cu numele public fixat prin `KC_HOSTNAME`. Mailpit nu este public; îl deschidem printr-un tunel SSH.
 
@@ -18,7 +19,9 @@ Caddy obține singur certificatele Let's Encrypt și trimite cererile către con
 
 ## Pornirea
 
-Pe server sunt necesare Docker și înregistrări DNS de tip A pentru `idp`, `secretariat` și `biblioteca`, toate spre adresa serverului.
+Pe server sunt necesare Docker și înregistrări DNS de tip A pentru `idp`, `secretariat`, `biblioteca` și `platformacursuri`, toate spre adresa serverului.
+
+**Platforma de cursuri** se construiește din folderul `01-autentificare-locala/platforma-cursuri`. Dacă pe server este copiat doar acest folder al laboratorului, copiem alături și platforma și indicăm calea ei în `.env`, de exemplu `CURSURI_SRC=/home/azureuser/platforma-cursuri`. Platforma nu are bază de date: cursurile, conturile și registrul simulat sunt date de test, în memorie, cu parola din exercițiul 12.
 
 ```bash
 cd 02-identitate-federata-keycloak/deploy/azure
