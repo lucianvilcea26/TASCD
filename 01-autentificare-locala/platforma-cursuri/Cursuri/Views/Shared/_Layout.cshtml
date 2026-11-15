@@ -47,15 +47,18 @@
                         <li class="nav-item">
                             <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link @Active("Courses")" asp-controller="Courses" asp-action="Index">Courses</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @Active("People")" asp-controller="People" asp-action="Index">People</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @Active("Secretariat")" asp-controller="Secretariat" asp-action="Index">Secretariat</a>
-                        </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Courses")" asp-controller="Courses" asp-action="Index">Courses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @Active("People")" asp-controller="People" asp-action="Index">People</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Secretariat")" asp-controller="Secretariat" asp-action="Index">Secretariat</a>
+                            </li>
+                        }
                     </ul>
                     @if (User.Identity?.IsAuthenticated == true)
                     {

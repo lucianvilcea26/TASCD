@@ -7,12 +7,15 @@
     <div class="u-eyebrow">Universitatea (demo)</div>
     <h1>Cursuri</h1>
     <p>Online courses of the university.</p>
-    <form asp-controller="People" asp-action="Find" method="get" class="row g-2 mt-3">
-        <div class="col-auto">
-            <input name="username" class="form-control" size="30" placeholder="Username, e.g. ana.popescu" />
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-light">Find a person</button>
-        </div>
-    </form>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <form asp-controller="People" asp-action="Find" method="get" class="row g-2 mt-3">
+            <div class="col-auto">
+                <input name="username" class="form-control" size="30" placeholder="Username, e.g. ana.popescu" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-light">Find a person</button>
+            </div>
+        </form>
+    }
 </section>
