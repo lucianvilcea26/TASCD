@@ -2,7 +2,7 @@
 #   https://idp.${DOMAIN}          Keycloak (admin console: /admin)
 #   https://secretariat.${DOMAIN}  Secretariat
 #   https://biblioteca.${DOMAIN}   Biblioteca
-#   https://platformacursuri.${DOMAIN}  course platform of exercises 1-14 (local accounts, no Keycloak)
+#   https://platformacursuri.${DOMAIN}  course platform of exercises 1-16 (local accounts, no Keycloak)
 # Mailpit is not public: ssh -L 8025:127.0.0.1:8025 azureuser@<server>, then http://localhost:8025
 # Secrets live in .env (created by ./init-env.sh, never committed).
 
@@ -145,6 +145,9 @@ services:
         EXPOSE 8080
         ENTRYPOINT ["dotnet", "Cursuri.dll"]
     restart: unless-stopped
+    environment:
+      # The seeded administrator (ioana.marin) must not use the course's published test password here.
+      Platform__AdminPassword: ${CURSURI_ADMIN_PASSWORD:?run init-env.sh or set CURSURI_ADMIN_PASSWORD in .env}
     volumes:
       - cursuri-keys:/home/app/.aspnet/DataProtection-Keys
 

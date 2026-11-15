@@ -59,6 +59,12 @@
                                 <a class="nav-link @Active("Secretariat")" asp-controller="Secretariat" asp-action="Index">Secretariat</a>
                             </li>
                         }
+                        @if (User.IsInRole("administrator"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Admin")" asp-controller="Admin" asp-action="Users">Users</a>
+                            </li>
+                        }
                     </ul>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
@@ -76,7 +82,10 @@
                     }
                     else
                     {
-                        <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Log in</a>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Register">Register</a>
+                            <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Log in</a>
+                        </div>
                     }
                 </div>
             </div>

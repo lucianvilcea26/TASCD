@@ -16,7 +16,8 @@ if [ ! -f .env ]; then
   echo "Created .env (the Keycloak admin password is KC_ADMIN_PASSWORD)."
 fi
 # Staff passwords: the lab ones are public in the README, so the server gets its own.
-for key in SECRETARA_PASSWORD BIBLIOTECAR_PASSWORD; do
+# CURSURI_ADMIN_PASSWORD is the course platform's administrator (ioana.marin).
+for key in SECRETARA_PASSWORD BIBLIOTECAR_PASSWORD CURSURI_ADMIN_PASSWORD; do
   grep -q "^$key=" .env || echo "$key=$(openssl rand -base64 18 | tr -d '/+=')" >> .env
 done
 python3 render-realm.py

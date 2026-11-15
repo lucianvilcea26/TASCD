@@ -1,8 +1,8 @@
 # Platforma de cursuri (Cursuri)
 
-Platforma de cursuri online a universității de laborator, a treia aplicație alături de Secretariat și Biblioteca din [`../../02-identitate-federata-keycloak/`](../../02-identitate-federata-keycloak/). Este o aplicație ASP.NET Core MVC (.NET 10), cu datele ținute în memorie și cu autentificare locală: studenții și profesorii intră cu un nume de utilizator și o parolă păstrate (ca hash) de aplicație. Aspectul vine din foaia de stil comună `universitate.css`, cu tema `app-cursuri`.
+Platforma de cursuri online a universității de laborator, a treia aplicație alături de Secretariat și Biblioteca din [`../../02-identitate-federata-keycloak/`](../../02-identitate-federata-keycloak/). Este o aplicație ASP.NET Core MVC (.NET 10), cu datele ținute în memorie și cu autentificare locală: studenții, profesorii și administratorul intră cu un nume de utilizator și o parolă păstrate (ca hash) de aplicație, iar oricine își poate crea singur un cont. Aspectul vine din foaia de stil comună `universitate.css`, cu tema `app-cursuri`.
 
-Este starea finală a exercițiilor 1-14 din cursul **Tehnologii pentru Asigurarea Securității și Confidențialității Datelor**: fiecare exercițiu corespunde unui pas (un commit), de la proiectul gol până la pagina „Who am I".
+Este starea finală a exercițiilor 1-16 din cursul **Tehnologii pentru Asigurarea Securității și Confidențialității Datelor**: fiecare exercițiu corespunde unui pas (un commit), de la proiectul gol până la administrarea utilizatorilor.
 
 | Exercițiile | Ce adaugă |
 |---|---|
@@ -10,7 +10,9 @@ Este starea finală a exercițiilor 1-14 din cursul **Tehnologii pentru Asigurar
 | 4-5 | catalogul cursurilor (`/Courses`) și serviciul `ICourseCatalog` |
 | 6-9 | modelul identității, registrul platformei (`/People`), registrul simulat al secretariatului (`/Secretariat`), aceeași persoană în două contexte |
 | 10 | căutarea după numele de utilizator (identificarea) |
-| 11-14 | formularul de autentificare, parola verificată cu `PasswordHasher`, cookie-ul de autentificare, pagina „Who am I" (`/Account/Me`) și sign-out-ul |
+| 11-14 | formularul de autentificare, parola verificată cu `PasswordHasher`, cookie-ul de autentificare, pagina „Who am I" (`/Account/Me`), sign-out-ul și paginile care cer autentificare |
+| 15 | înregistrarea (`/Account/Register`): conturi create de utilizatori, cu numele și matricolul declarate de ei (issuer `Self-asserted`) |
+| 16 | rolurile `student`, `profesor`, `administrator` și pagina „Users" (`/Admin/Users`, doar pentru administratori): schimbarea rolului, resetarea parolei, ștergerea contului și verificarea cu registrul secretariatului |
 
 ## Pornire
 
@@ -24,7 +26,7 @@ Aplicația ascultă pe https://localhost:7101 (și pe http://localhost:5101, red
 
 ## Conturile de test
 
-Toate conturile au parola `Parola.2026`; aplicația îi calculează hash-ul la pornire.
+Conturile create la pornire au parola `Parola.2026`; aplicația îi calculează hash-ul la pornire. Excepție face administratorul, `ioana.marin`: parola lui vine din configurare, din cheia `Platform:AdminPassword` (de exemplu, variabila de mediu `Platform__AdminPassword`), și este `Parola.2026` doar dacă cheia lipsește. Pe un server public, cheia trebuie setată, ca administratorul să nu aibă parola publicată în curs.
 
 | Utilizator | Nume | Rol | Matricol |
 |---|---|---|---|
@@ -33,5 +35,8 @@ Toate conturile au parola `Parola.2026`; aplicația îi calculează hash-ul la p
 | `elena.dumitru` | Elena Dumitru | student | `S2024017` (înmatricularea a expirat) |
 | `andreea.vasile` | Andreea Vasile | profesor | - |
 | `victor.neagu` | Victor Neagu | profesor | - |
+| `ioana.marin` | Ioana Marin | administrator | - |
 
-Secretariatul este simulat în aceeași aplicație (`InMemorySecretariatRegistry`); toate datele, inclusiv CNP-urile, sunt inventate. Platforma nu are încă autorizare: paginile People și Secretariat sunt deschise oricui, intenționat, ca punct de plecare pentru discuția din curs.
+Pe lângă acestea, oricine își poate crea un cont din „Register", cu o parolă de cel puțin 15 caractere; contul primește rolul `student`. Conturile înregistrate trăiesc în memorie și dispar la repornirea aplicației, iar registrul acceptă cel mult 500 de conturi.
+
+Secretariatul este simulat în aceeași aplicație (`InMemorySecretariatRegistry`); toate datele, inclusiv CNP-urile, sunt inventate. Paginile Courses, People și Secretariat cer doar un utilizator autentificat, oricare ar fi rolul lui: Ana, studentă, vede și ea registrul secretariatului, intenționat, ca punct de plecare pentru discuția despre autorizare din curs. Singura pagină protejată pe rol este „Users", cu `[Authorize(Roles = "administrator")]`.

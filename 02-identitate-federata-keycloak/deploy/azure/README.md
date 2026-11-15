@@ -7,7 +7,7 @@ Aceeași configurație ca în `deploy/`, pe o singură mașină Linux, în spate
 | `https://idp.<domeniu>` | Keycloak (consola: `/admin`) |
 | `https://secretariat.<domeniu>` | Secretariat |
 | `https://biblioteca.<domeniu>` | Biblioteca |
-| `https://platformacursuri.<domeniu>` | platforma de cursuri din exercițiile 1-14 (conturi locale, fără Keycloak) |
+| `https://platformacursuri.<domeniu>` | platforma de cursuri din exercițiile 1-16 (conturi locale, înregistrare și roluri, fără Keycloak) |
 
 Caddy obține singur certificatele Let's Encrypt și trimite cererile către containere. Keycloak rulează în mod de producție (`start`), cu numele public fixat prin `KC_HOSTNAME`. Mailpit nu este public; îl deschidem printr-un tunel SSH.
 
