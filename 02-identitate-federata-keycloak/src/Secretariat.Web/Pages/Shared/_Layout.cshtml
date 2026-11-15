@@ -1,3 +1,4 @@
+@inject Microsoft.Extensions.Configuration.IConfiguration Config
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,8 +18,8 @@
         <div class="container">
             <span class="u-uni">@Icons.Svg("university") Universitatea (demo)</span>
             <nav class="u-apps" aria-label="University applications">
-                <a class="current" href="http://localhost:5001/">Secretariat</a>
-                <a href="http://localhost:5002/">Biblioteca</a>
+                <a class="current" href="@Config["Links:Secretariat"]">Secretariat</a>
+                <a href="@Config["Links:Biblioteca"]">Biblioteca</a>
             </nav>
         </div>
     </div>
@@ -67,8 +68,8 @@
         <div class="container">
             <span>Secretariat · demo application of the identity course · sign-in by Keycloak, realm <code>universitate</code></span>
             <span>
-                <a href="http://localhost:8080/admin/master/console/#/universitate">Admin console</a> ·
-                <a href="http://localhost:8025">Mailpit</a>
+                <a href="@Config["Links:AdminConsole"]">Admin console</a> ·
+                <a href="@Config["Links:Mailpit"]">Mailpit</a>
             </span>
         </div>
     </footer>

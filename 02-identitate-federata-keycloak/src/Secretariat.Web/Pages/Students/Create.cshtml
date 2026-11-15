@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model Secretariat.Web.Pages.Students.CreateModel
 @{
     ViewData["Title"] = "Add student";
@@ -33,19 +33,37 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">What happens when you press Save</div>
+        <details class="card u-flow" open id="save-flow">
+            <summary class="card-header">What happens when you press Save @Icons.Svg("chevron", "u-flow-chevron")</summary>
             <div class="card-body">
-                <ol class="u-steps">
+                <partial name="_SaveFlow" />
+                <ol class="u-steps u-saveflow-steps">
                     <li>The student is saved in the <strong>Secretariat database</strong> (source of truth).</li>
-                    <li><code>POST /admin/realms/universitate/users</code>: creates the account with names, email and the read-only attributes
+                    <li>With a token for its own service account (client credentials), <code>POST /admin/realms/universitate/users</code>: creates the account with names, email and the read-only attributes
                         <code>student_id</code>, <code>enrollment_status</code>, <code>faculty</code>.</li>
                     <li><code>PUT /users/{id}/groups/{studenti}</code>: the group grants the roles <code>secretariat:student</code> and <code>biblioteca:reader</code>.</li>
                     <li><code>PUT /users/{id}/execute-actions-email</code> with <code>VERIFY_EMAIL</code>, <code>UPDATE_PASSWORD</code> and <code>CONFIGURE_TOTP</code>: Keycloak emails a one-time link; opening it proves the student controls the inbox.</li>
                 </ol>
             </div>
-        </div>
+        </details>
     </div>
 </div>
 
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Restart the diagram and the step highlights together whenever the panel is opened,
+        // so the SVG (SMIL) timeline and the CSS animations stay in step.
+        (() => {
+            const panel = document.getElementById("save-flow");
+            const svg = panel.querySelector("svg.u-saveflow");
+            const restart = () => {
+                svg.setCurrentTime(0);
+                panel.classList.remove("is-playing"); void panel.offsetWidth; panel.classList.add("is-playing");
+            };
+            if (matchMedia("(prefers-reduced-motion: reduce)").matches) { svg.pauseAnimations(); svg.setCurrentTime(11); return; }
+            panel.addEventListener("toggle", () => panel.open && restart());
+            restart();
+        })();
+    </script>
+}

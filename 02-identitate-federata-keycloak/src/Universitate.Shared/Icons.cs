@@ -35,7 +35,10 @@ public static class Icons
         ["external"] = "M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6",
         ["counter"] = "M3 10h18M5 10v10M19 10v10M3 20h18M8 6h8M12 6V3",
         ["ban"] = "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM4.9 4.9l14.2 14.2",
-        ["refresh"] = "M21 12a9 9 0 0 1-15.4 6.4L3 16M3 12a9 9 0 0 1 15.4-6.4L21 8M21 3v5h-5M3 21v-5h5",
+        ["chevron"] = "M6 9l6 6 6-6",
+        ["play"] = "M7 4v16l13-8Z",
+        ["history"] = "M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2",
+        ["refresh"] ="M21 12a9 9 0 0 1-15.4 6.4L3 16M3 12a9 9 0 0 1 15.4-6.4L21 8M21 3v5h-5M3 21v-5h5",
     };
 
     public static IHtmlContent Svg(string name, string cssClass = "u-ico") =>

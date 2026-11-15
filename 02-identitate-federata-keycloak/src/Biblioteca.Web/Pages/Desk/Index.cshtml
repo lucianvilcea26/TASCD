@@ -1,5 +1,6 @@
 @page
 @model Biblioteca.Web.Pages.Desk.IndexModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Config
 @{
     ViewData["Title"] = "Lending desk";
     var check = Model.LastCheck;
@@ -51,7 +52,7 @@
                     <ol class="u-steps">
                         <li>gets a token for <strong>itself</strong> from Keycloak (<code>grant_type=client_credentials</code>,
                             client <code>biblioteca</code>);</li>
-                        <li>calls <code>GET http://localhost:5001/api/students/{id}/enrollment</code> with it;</li>
+                        <li>calls <code>GET @(Config["SecretariatApi:BaseUrl"])api/students/{id}/enrollment</code> with it;</li>
                         <li>the Secretariat checks <code>aud</code> = <code>secretariat-api</code> and role
                             <code>enrollment.read</code>, then answers from its database.</li>
                     </ol>

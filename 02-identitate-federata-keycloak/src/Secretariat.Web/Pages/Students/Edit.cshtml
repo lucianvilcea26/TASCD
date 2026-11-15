@@ -1,4 +1,4 @@
-@page "{id:int}"
+﻿@page "{id:int}"
 @model Secretariat.Web.Pages.Students.EditModel
 @{
     var s = Model.Student;
@@ -20,13 +20,7 @@
     </div>
 </div>
 
-@if (TempData["Calls"] is string calls && calls.Length > 0)
-{
-    <div class="card mb-4 border-primary u-code-card">
-        <div class="card-header small">@Icons.Svg("server") Keycloak Admin API calls just made by the Secretariat (as <code>service-account-secretariat</code>)</div>
-        <pre class="u-code">@calls</pre>
-    </div>
-}
+<partial name="_ApiCallsHistory" model="s" />
 @if (s.LastSyncError is not null)
 {
     <div class="alert alert-danger"><span><strong>Keycloak is out of sync with the registry.</strong> @s.LastSyncError</span></div>

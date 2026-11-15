@@ -2,3 +2,106 @@
 
 .u-student-table td:first-child { width: 1%; white-space: nowrap; }
 .u-status-col { width: 1%; white-space: nowrap; }
+
+/* ------------------------------------------------------------------ "What happens when you press Save" */
+
+details.u-flow > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+details.u-flow > summary::-webkit-details-marker { display: none; }
+details.u-flow:not([open]) > summary { border-bottom: 0; border-radius: var(--u-radius); }
+.u-flow-chevron { width: 1.05rem; height: 1.05rem; color: var(--u-muted); transition: transform .2s; }
+details.u-flow[open] .u-flow-chevron { transform: rotate(180deg); }
+
+svg.u-saveflow { width: 100%; height: auto; display: block; margin: -.25rem 0 1rem; }
+.u-saveflow text { font-family: inherit; text-anchor: middle; }
+.u-saveflow .sf-life { stroke: #d3dae5; stroke-width: 1.2; stroke-dasharray: 3 4; }
+.u-saveflow .sf-head { fill: var(--u-accent-50); stroke: var(--u-accent-100); }
+.u-saveflow .sf-head-t { font-size: 10.5px; font-weight: 700; fill: var(--u-accent-700); }
+.u-saveflow .sf-head-s, .u-saveflow .sf-small { font-size: 8.5px; fill: var(--u-muted); }
+.u-saveflow .sf-base { stroke: #cfd6e1; stroke-width: 1.3; fill: none; }
+.u-saveflow .sf-on { stroke: var(--u-accent); stroke-width: 2; fill: none; }
+.u-saveflow .sf-is-reply .sf-on { stroke: var(--u-success); }
+.u-saveflow .sf-ah { fill: #cfd6e1; }
+.u-saveflow .sf-ah-on { fill: var(--u-accent); }
+.u-saveflow .sf-label { font-size: 9.5px; fill: #344054; }
+.u-saveflow .sf-mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 8.6px; }
+.u-saveflow .sf-packet { fill: var(--u-accent); }
+.u-saveflow .sf-packet.sf-reply { fill: var(--u-success); }
+.u-saveflow .sf-badge circle { fill: var(--u-accent-50); }
+.u-saveflow .sf-badge text { font-size: 9px; font-weight: 700; fill: var(--u-accent); }
+.u-saveflow .sf-badge .sf-badge-on { fill: var(--u-accent); }
+.u-saveflow .sf-badge .sf-badge-on-t { fill: #fff; }
+.u-saveflow .sf-db path, .u-saveflow .sf-db ellipse { fill: #fff; stroke: var(--u-accent); stroke-width: 1.4; }
+.u-saveflow .sf-mail rect, .u-saveflow .sf-mail path { fill: #fff; stroke: var(--u-gold); stroke-width: 1.6; }
+
+/* The list follows the diagram's 12 s timeline: each step lights up while its messages run.
+   Windows (in % of 12 s): 1 = 2-20, 2 = 21-50, 3 = 54-67, 4 = 70-94. */
+.u-saveflow-steps li { border-radius: 10px; margin: 0 -.5rem .35rem; padding: .45rem .5rem .45rem 2.9rem; }
+.u-saveflow-steps li::before { left: .5rem; top: .4rem; }
+.u-flow.is-playing .u-saveflow-steps li,
+.u-flow.is-playing .u-saveflow-steps li::before { animation-duration: 12s; animation-timing-function: linear; animation-iteration-count: infinite; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(1) { animation-name: sf-row1; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(2) { animation-name: sf-row2; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(3) { animation-name: sf-row3; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(4) { animation-name: sf-row4; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(1)::before { animation-name: sf-num1; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(2)::before { animation-name: sf-num2; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(3)::before { animation-name: sf-num3; }
+.u-flow.is-playing .u-saveflow-steps li:nth-child(4)::before { animation-name: sf-num4; }
+@keyframes sf-row1 { 0%, 2% { background: transparent; } 3%, 19% { background: var(--u-accent-50); } 21%, 100% { background: transparent; } }
+@keyframes sf-row2 { 0%, 20% { background: transparent; } 21.5%, 49% { background: var(--u-accent-50); } 51%, 100% { background: transparent; } }
+@keyframes sf-row3 { 0%, 53% { background: transparent; } 54.5%, 66% { background: var(--u-accent-50); } 68%, 100% { background: transparent; } }
+@keyframes sf-row4 { 0%, 69% { background: transparent; } 70.5%, 92% { background: var(--u-accent-50); } 94%, 100% { background: transparent; } }
+@keyframes sf-num1 { 0%, 2% { background: var(--u-accent-50); color: var(--u-accent); } 3%, 95% { background: var(--u-accent); color: #fff; } 100% { background: var(--u-accent-50); color: var(--u-accent); } }
+@keyframes sf-num2 { 0%, 20% { background: var(--u-accent-50); color: var(--u-accent); } 21.5%, 95% { background: var(--u-accent); color: #fff; } 100% { background: var(--u-accent-50); color: var(--u-accent); } }
+@keyframes sf-num3 { 0%, 53% { background: var(--u-accent-50); color: var(--u-accent); } 54.5%, 95% { background: var(--u-accent); color: #fff; } 100% { background: var(--u-accent-50); color: var(--u-accent); } }
+@keyframes sf-num4 { 0%, 69% { background: var(--u-accent-50); color: var(--u-accent); } 70.5%, 95% { background: var(--u-accent); color: #fff; } 100% { background: var(--u-accent-50); color: var(--u-accent); } }
+@media (prefers-reduced-motion: reduce) {
+  .u-flow.is-playing .u-saveflow-steps li, .u-flow.is-playing .u-saveflow-steps li::before { animation: none; }
+}
+
+/* ------------------------------------------------------------------ Admin API calls: history + replay */
+
+.u-calls .u-replay-btn { color: #cfe0ff; border: 1px solid #2c3b55; background: rgba(255, 255, 255, .04); display: inline-flex; align-items: center; gap: .35rem; }
+.u-calls .u-replay-btn:hover { color: #fff; background: rgba(255, 255, 255, .1); }
+.u-calls .u-replay-btn .u-ico { width: .8rem; height: .8rem; }
+.u-calls-body { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); color: var(--u-code-ink); }
+@media (max-width: 900px) { .u-calls-body { grid-template-columns: 1fr; } }
+
+.u-calls-history { list-style: none; margin: 0; padding: .6rem; border-right: 1px solid #1f2a3d; max-height: 340px; overflow: auto; }
+.u-calls-op { all: unset; box-sizing: border-box; width: 100%; display: flex; gap: .55rem; align-items: flex-start; padding: .5rem .6rem; border-radius: 9px; cursor: pointer; }
+.u-calls-op:hover { background: rgba(255, 255, 255, .05); }
+.u-calls-op.active { background: rgba(122, 162, 255, .14); box-shadow: inset 2px 0 0 #7aa2ff; }
+.u-calls-op:focus-visible { outline: 2px solid #7aa2ff; }
+.u-op-dot { width: .5rem; height: .5rem; border-radius: 50%; margin-top: .4rem; flex: none; background: #3ecf8e; }
+.u-op-dot.bad { background: #ff6b6b; }
+.u-op-text { display: flex; flex-direction: column; line-height: 1.3; }
+.u-op-sum { font-size: .82rem; font-weight: 600; color: #e6ebf4; }
+.u-op-time { font-size: .72rem; color: #8b98ad; }
+
+.u-replay { padding: .7rem 1rem 1rem; }
+.u-replay-lanes { display: flex; justify-content: space-between; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #8b98ad; margin-bottom: .3rem; }
+.u-replay ol { list-style: none; margin: 0; padding: .2rem .7rem; border-left: 2px dashed #2c3b55; border-right: 2px dashed #2c3b55; }
+.u-replay li { padding: .4rem 0 .15rem; }
+.u-rq { display: flex; justify-content: space-between; gap: .8rem; align-items: baseline; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: .76rem; }
+.u-p { color: #d7e1f0; word-break: break-all; }
+.u-m { font-weight: 700; font-size: .68rem; padding: .05rem .35rem; border-radius: 4px; margin-right: .3rem; background: #22324d; color: #9ecbff; }
+.u-m-post { background: #1d3b2e; color: #7ee2a8; } .u-m-put { background: #3a2f17; color: #f5c66b; }
+.u-m-delete { background: #3f1d22; color: #ff9b9b; } .u-m-get { background: #1d2f4d; color: #9ecbff; }
+.u-rs { flex: none; font-size: .7rem; font-weight: 700; padding: .05rem .45rem; border-radius: 20px; white-space: nowrap; }
+.u-rs.ok { background: rgba(62, 207, 142, .16); color: #6ee7b0; }
+.u-rs.bad { background: rgba(255, 107, 107, .16); color: #ff9b9b; }
+.u-wire { position: relative; height: 16px; margin: .2rem -.7rem 0; }
+.u-go, .u-back { position: absolute; left: 0; right: 0; }
+.u-go { top: 4px; height: 2px; background: #7aa2ff; transform-origin: left; }
+.u-go::after { content: ""; position: absolute; right: -2px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: #7aa2ff; box-shadow: 0 0 8px #7aa2ff; }
+.u-back { top: 11px; border-top: 2px dashed #3ecf8e; transform-origin: right; }
+.u-back.bad { border-top-color: #ff6b6b; }
+
+/* Final state (history, reduced motion): everything drawn. Playing: one call every 1.2 s. */
+.u-replay.is-playing li { animation: u-row-in .3s both; animation-delay: calc(var(--i) * 1.2s); }
+.u-replay.is-playing .u-go { animation: u-grow .55s ease-out both; animation-delay: calc(var(--i) * 1.2s + .05s); }
+.u-replay.is-playing .u-back { animation: u-grow .45s ease-out both; animation-delay: calc(var(--i) * 1.2s + .65s); }
+.u-replay.is-playing .u-rs { animation: u-fade .25s both; animation-delay: calc(var(--i) * 1.2s + 1s); }
+@keyframes u-row-in { from { opacity: .15; } to { opacity: 1; } }
+@keyframes u-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes u-fade { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }

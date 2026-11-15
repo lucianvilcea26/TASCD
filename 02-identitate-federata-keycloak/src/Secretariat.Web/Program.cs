@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Secretariat.Web.Api;
 using Secretariat.Web.Data;
 using Secretariat.Web.Keycloak;
@@ -32,6 +32,8 @@ builder.Services
     .AddHttpClient<KeycloakAdminClient>(c => c.BaseAddress = new Uri(builder.Configuration["KeycloakAdmin:BaseUrl"]!))
     .AddServiceAccountToken();
 builder.Services.AddScoped<StudentProvisioning>();
+// Keeps every operation's Admin API calls per student (the history panel on the student page).
+builder.Services.AddProvisioningHistory(builder.Configuration.GetConnectionString("Secretariat")!);
 
 var app = builder.Build();
 

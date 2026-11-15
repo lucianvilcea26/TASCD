@@ -1,0 +1,86 @@
+@using Secretariat.Web.Keycloak
+@model Student
+@inject ProvisioningHistory History
+@*
+    Every operation on this student's Keycloak account, newest first, with the Admin API calls it made
+    (stored by ProvisioningHistoryFilter). The selected operation is replayed as a small animation:
+    each request travels from the Secretariat to Keycloak, the answer comes back with its status.
+*@
+@{
+    var entries = await History.ForStudentAsync(Model.Id);
+    var justMade = TempData["Calls"] as string;
+    var fresh = !string.IsNullOrEmpty(justMade);
+}
+@if (entries.Count == 0 && fresh)
+{
+    <div class="card mb-4 border-primary u-code-card">
+        <div class="card-header small">@Icons.Svg("server") Keycloak Admin API calls just made by the Secretariat (as <code>service-account-secretariat</code>)</div>
+        <pre class="u-code">@justMade</pre>
+    </div>
+}
+else if (entries.Count > 0)
+{
+    <div class="card mb-4 border-primary u-code-card u-calls" id="api-calls">
+        <div class="card-header small d-flex justify-content-between align-items-center gap-2 flex-wrap">
+            <span>@Icons.Svg("server") Keycloak Admin API calls @(fresh ? "just made" : "made") by the Secretariat (as <code>service-account-secretariat</code>)</span>
+            <button type="button" class="btn btn-sm u-replay-btn" data-replay>@Icons.Svg("play") Replay</button>
+        </div>
+        <div class="u-calls-body">
+            <ol class="u-calls-history" aria-label="History of operations">
+                @for (var i = 0; i < entries.Count; i++)
+                {
+                    var e = entries[i];
+                    <li>
+                        <button type="button" class="u-calls-op @(i == 0 ? "active" : "")" data-op="op-@e.Id">
+                            <span class="u-op-dot @(e.Ok ? "ok" : "bad")"></span>
+                            <span class="u-op-text">
+                                <span class="u-op-sum">@e.Summary</span>
+                                <span class="u-op-time">@Ui.Local(e.AtUtc) · @e.ParsedCalls.Count calls@(i == 0 && fresh ? " · just now" : "")</span>
+                            </span>
+                        </button>
+                    </li>
+                }
+            </ol>
+            <div class="u-replays">
+                @for (var i = 0; i < entries.Count; i++)
+                {
+                    var e = entries[i];
+                    <div class="u-replay @(i == 0 ? (fresh ? "is-playing" : "is-done") : "is-done")" id="op-@e.Id" hidden="@(i != 0)">
+                        <div class="u-replay-lanes"><span>Secretariat</span><span>Keycloak · Admin API</span></div>
+                        <ol>
+                            @{ var j = 0; }
+                            @foreach (var call in e.ParsedCalls)
+                            {
+                                <li style="--i:@(j++)">
+                                    <div class="u-rq">
+                                        <span><span class="u-m u-m-@call.Method.ToLowerInvariant()">@call.Method</span> <span class="u-p">@call.Path</span></span>
+                                        <span class="u-rs @(call.Ok ? "ok" : "bad")">@call.Status @call.Reason</span>
+                                    </div>
+                                    <div class="u-wire"><span class="u-go"></span><span class="u-back @(call.Ok ? "" : "bad")"></span></div>
+                                </li>
+                            }
+                        </ol>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const card = document.getElementById("api-calls");
+            const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+            const play = replay => {
+                card.querySelectorAll(".u-replay").forEach(r => r.hidden = r !== replay);
+                replay.classList.remove("is-playing", "is-done");
+                void replay.offsetWidth;                       // restart the CSS animations
+                replay.classList.add(reduce ? "is-done" : "is-playing");
+            };
+            card.querySelectorAll("[data-op]").forEach(button => button.addEventListener("click", () => {
+                card.querySelectorAll("[data-op]").forEach(b => b.classList.toggle("active", b === button));
+                play(document.getElementById(button.dataset.op));
+            }));
+            card.querySelector("[data-replay]").addEventListener("click", () => play(card.querySelector(".u-replay:not([hidden])")));
+            if (reduce) card.querySelectorAll(".u-replay.is-playing").forEach(r => r.classList.replace("is-playing", "is-done"));
+        })();
+    </script>
+}

@@ -1,0 +1,2 @@
+# The server runs these files: keep LF line endings on every checkout.
+* text=auto eol=lf
